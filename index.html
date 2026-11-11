@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +26,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-black">
+<body class="h-full bg-black overflow-hidden">
 
   <!-- ================= TELA DE BLOQUEIO (PIN) ================= -->
   <div id="lockscreen" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-6">
@@ -63,60 +63,56 @@
     </div>
   </div>
 
-  <!-- ================= LAYOUT PRINCIPAL COM SIDEBAR ================= -->
-  <div id="app" class="hidden min-h-screen flex flex-col md:flex-row">
+  <!-- ================= LAYOUT PRINCIPAL ================= -->
+  <div id="app" class="hidden h-full flex flex-col md:flex-row overflow-hidden">
 
     <!-- BARRA LATERAL (SIDEBAR) -->
-    <aside class="w-full md:w-64 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-5 flex flex-col justify-between shrink-0 md:h-screen md:sticky md:top-0">
+    <aside class="w-full md:w-60 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-4 flex flex-col justify-between shrink-0 z-30">
       
-      <!-- Topo: Marca e Menu -->
-      <div class="space-y-6">
-        <!-- Logo e Título -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+      <div class="space-y-5">
+        <div class="flex items-center gap-3 px-1">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 flex items-center justify-center text-white font-bold text-base shadow-lg">
             
           </div>
           <div>
-            <h1 class="text-base font-black text-white tracking-tight">Personal Hub</h1>
-            <p class="text-[11px] text-neutral-400">Dashboard & Rotina</p>
+            <h1 class="text-sm font-black text-white tracking-tight leading-tight">Personal Hub</h1>
+            <p class="text-[10px] text-neutral-400">Dashboard & Rotina</p>
           </div>
         </div>
 
-        <!-- Links Laterais -->
-        <nav class="space-y-1.5 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
-          <button id="nav-health" onclick="switchTab('health')" class="nav-item active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
-            <span class="text-lg"></span>
-            <span class="whitespace-nowrap">Saúde (Watch)</span>
+        <nav class="space-y-1 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-1 md:pb-0">
+          <button id="nav-health" onclick="switchTab('health')" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-base"></span>
+            <span class="whitespace-nowrap">Saúde</span>
           </button>
-          <button id="nav-studies" onclick="switchTab('studies')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
-            <span class="text-lg">📚</span>
+          <button id="nav-studies" onclick="switchTab('studies')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-base">📚</span>
             <span class="whitespace-nowrap">Estudos</span>
           </button>
-          <button id="nav-finance" onclick="switchTab('finance')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
-            <span class="text-lg">💰</span>
+          <button id="nav-finance" onclick="switchTab('finance')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-base">💰</span>
             <span class="whitespace-nowrap">Finanças</span>
           </button>
         </nav>
       </div>
 
-      <!-- Rodapé da Sidebar: Status & Bloquear -->
-      <div class="pt-4 border-t border-neutral-800/80 flex items-center justify-between md:flex-col md:items-stretch gap-3">
-        <div class="text-[11px] text-neutral-500 flex items-center gap-1.5">
+      <div class="pt-3 border-t border-neutral-800/80 flex items-center justify-between md:flex-col md:items-stretch gap-2">
+        <div class="text-[11px] text-neutral-500 flex items-center gap-1.5 px-1">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Online</span>
         </div>
-        <button onclick="lockApp()" class="flex items-center justify-center gap-2 text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white px-3 py-2 rounded-xl transition">
+        <button onclick="lockApp()" class="flex items-center justify-center gap-1.5 text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white px-3 py-1.5 rounded-xl transition">
           <span>🔒</span> <span>Bloquear</span>
         </button>
       </div>
 
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 p-4 sm:p-8 max-w-6xl overflow-y-auto">
+    <!-- ÁREA DE CONTEÚDO -->
+    <main class="flex-1 h-full flex flex-col overflow-hidden relative">
 
       <!-- ================= ABA 1: SAÚDE ================= -->
-      <section id="tab-content-health" class="space-y-6">
+      <section id="tab-content-health" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         <header class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
           <div>
             <h2 class="text-2xl font-black text-white tracking-tight">Apple Watch Health</h2>
@@ -127,7 +123,6 @@
           </div>
         </header>
 
-        <!-- Cards de Métricas -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
             <div class="flex items-center justify-between text-neutral-400 mb-2">
@@ -162,7 +157,6 @@
           </div>
         </div>
 
-        <!-- Gráfico com Seletor -->
         <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800 pb-4">
             <div>
@@ -184,34 +178,23 @@
         </div>
       </section>
 
-      <!-- ================= ABA 2: ESTUDOS ================= -->
-      <section id="tab-content-studies" class="hidden space-y-4">
-        <header class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
-          <div>
-            <h2 class="text-2xl font-black text-white tracking-tight">Central de Estudos</h2>
-            <p class="text-xs text-neutral-400">Google Apps Script integrado</p>
-          </div>
-          <a href="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" target="_blank" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-3.5 py-2 rounded-xl transition border border-neutral-700">
-            Abrir em Tela Cheia ↗
-          </a>
-        </header>
-        <div class="card-apple rounded-3xl overflow-hidden shadow-2xl h-[78vh]">
-          <iframe 
-            src="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" 
-            class="w-full h-full border-0 bg-white"
-            allow="fullscreen">
-          </iframe>
-        </div>
+      <!-- ================= ABA 2: ESTUDOS (PÁGINA INTEIRA / FULL SCREEN) ================= -->
+      <section id="tab-content-studies" class="hidden w-full h-full p-0 m-0 bg-white">
+        <iframe 
+          id="studies-frame"
+          src="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" 
+          class="w-full h-full border-0 block"
+          allow="fullscreen; camera; microphone">
+        </iframe>
       </section>
 
       <!-- ================= ABA 3: FINANÇAS ================= -->
-      <section id="tab-content-finance" class="hidden space-y-6">
+      <section id="tab-content-finance" class="hidden h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         <header class="border-b border-neutral-800/80 pb-4">
           <h2 class="text-2xl font-black text-white tracking-tight">Controle Financeiro</h2>
-          <p class="text-xs text-neutral-400">Gerenciamento no Supabase</p>
+          <p class="text-xs text-neutral-400">Supabase Database</p>
         </header>
 
-        <!-- Resumo -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="card-apple rounded-2xl p-5">
             <span class="text-xs font-bold uppercase tracking-wider text-neutral-400">Saldo Atual</span>
@@ -227,7 +210,6 @@
           </div>
         </div>
 
-        <!-- Novo Lançamento -->
         <div class="card-apple rounded-2xl p-5">
           <h3 class="text-sm font-bold text-white mb-3">Novo Lançamento</h3>
           <form id="finance-form" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
@@ -243,14 +225,13 @@
           </form>
         </div>
 
-        <!-- Lista Recente -->
         <div class="card-apple rounded-2xl p-5 space-y-3">
           <div class="flex justify-between items-center">
             <h3 class="text-sm font-bold text-white">Últimas Transações</h3>
             <button onclick="loadFinanceData()" class="text-xs text-neutral-400 hover:text-white">Atualizar</button>
           </div>
           <div id="finance-list" class="divide-y divide-neutral-800/80">
-            <p class="text-xs text-neutral-500 py-3 text-center">Nenhum lançamento encontrado.</p>
+            <p class="text-xs text-neutral-500 py-3 text-center">Nenhum lançamento cadastrado.</p>
           </div>
         </div>
       </section>

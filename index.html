@@ -24,6 +24,29 @@
       font-weight: 700;
       border-left: 3px solid #34D399;
     }
+
+    /* Estado da Sidebar Recolhida */
+    #sidebar.collapsed {
+      width: 4.5rem !important;
+    }
+    #sidebar.collapsed .sidebar-text {
+      display: none !important;
+    }
+    #sidebar.collapsed .nav-item {
+      justify-content: center !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    #sidebar.collapsed .sidebar-header {
+      justify-content: center !important;
+    }
+    #sidebar.collapsed .sidebar-footer {
+      justify-content: center !important;
+      flex-direction: column !important;
+    }
+    #sidebar.collapsed #toggle-icon {
+      transform: rotate(180deg);
+    }
   </style>
 </head>
 <body class="h-full bg-black overflow-hidden">
@@ -66,57 +89,87 @@
   <!-- ================= LAYOUT PRINCIPAL ================= -->
   <div id="app" class="hidden h-full flex flex-col md:flex-row overflow-hidden">
 
-    <!-- BARRA LATERAL (SIDEBAR) -->
-    <aside class="w-full md:w-60 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-4 flex flex-col justify-between shrink-0 z-30">
+    <!-- BARRA LATERAL (SIDEBAR COM RECOLHIMENTO) -->
+    <aside id="sidebar" class="w-full md:w-60 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-3.5 flex flex-col justify-between shrink-0 z-30 transition-all duration-300">
       
-      <div class="space-y-5">
-        <div class="flex items-center gap-3 px-1">
-          <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 flex items-center justify-center text-white font-bold text-base shadow-lg">
-            
+      <div class="space-y-4">
+        <!-- Cabeçalho da Sidebar + Botão Toggle -->
+        <div class="sidebar-header flex items-center justify-between px-1">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 flex items-center justify-center text-white shrink-0 shadow-md">
+              <!-- Ícone de Coração/Saúde Oficial -->
+              <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div class="sidebar-text">
+              <h1 class="text-sm font-black text-white tracking-tight leading-none">Hub OS</h1>
+              <p class="text-[10px] text-neutral-400 mt-0.5">Dashboard</p>
+            </div>
           </div>
-          <div>
-            <h1 class="text-sm font-black text-white tracking-tight leading-tight">Personal Hub</h1>
-            <p class="text-[10px] text-neutral-400">Dashboard & Rotina</p>
-          </div>
+          <!-- Botão de Recolher/Expandir -->
+          <button onclick="toggleSidebar()" title="Recolher/Expandir menu" class="hidden md:flex items-center justify-center w-7 h-7 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800/80 transition">
+            <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
+          </button>
         </div>
 
+        <!-- Links da Navegação -->
         <nav class="space-y-1 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-1 md:pb-0">
-          <button id="nav-health" onclick="switchTab('health')" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
-            <span class="text-base"></span>
-            <span class="whitespace-nowrap">Saúde</span>
+          
+          <!-- Aba 1: Saúde (com Ícone de Coração/Saúde SVG) -->
+          <button id="nav-health" onclick="switchTab('health')" title="Saúde" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <svg class="w-4 h-4 text-rose-500 shrink-0 fill-current" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span class="sidebar-text whitespace-nowrap">Saúde</span>
           </button>
-          <button id="nav-studies" onclick="switchTab('studies')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
-            <span class="text-base">📚</span>
-            <span class="whitespace-nowrap">Estudos</span>
+
+          <!-- Aba 2: Estudos -->
+          <button id="nav-studies" onclick="switchTab('studies')" title="Estudos" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-sm shrink-0">📚</span>
+            <span class="sidebar-text whitespace-nowrap">Estudos</span>
           </button>
-          <button id="nav-finance" onclick="switchTab('finance')" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
-            <span class="text-base">💰</span>
-            <span class="whitespace-nowrap">Finanças</span>
+
+          <!-- Aba 3: Finanças -->
+          <button id="nav-finance" onclick="switchTab('finance')" title="Finanças" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-sm shrink-0">💰</span>
+            <span class="sidebar-text whitespace-nowrap">Finanças</span>
           </button>
         </nav>
       </div>
 
-      <div class="pt-3 border-t border-neutral-800/80 flex items-center justify-between md:flex-col md:items-stretch gap-2">
-        <div class="text-[11px] text-neutral-500 flex items-center gap-1.5 px-1">
+      <!-- Rodapé da Sidebar -->
+      <div class="sidebar-footer pt-3 border-t border-neutral-800/80 flex items-center justify-between md:flex-col md:items-stretch gap-2">
+        <div class="sidebar-text text-[11px] text-neutral-500 flex items-center gap-1.5 px-1">
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>Online</span>
         </div>
-        <button onclick="lockApp()" class="flex items-center justify-center gap-1.5 text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white px-3 py-1.5 rounded-xl transition">
-          <span>🔒</span> <span>Bloquear</span>
+        <button onclick="lockApp()" title="Bloquear tela" class="flex items-center justify-center gap-1.5 text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white p-2 rounded-xl transition">
+          <span class="text-xs">🔒</span> 
+          <span class="sidebar-text">Bloquear</span>
         </button>
       </div>
 
     </aside>
 
-    <!-- ÁREA DE CONTEÚDO -->
+    <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
     <main class="flex-1 h-full flex flex-col overflow-hidden relative">
 
       <!-- ================= ABA 1: SAÚDE ================= -->
       <section id="tab-content-health" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         <header class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
-          <div>
-            <h2 class="text-2xl font-black text-white tracking-tight">Apple Watch Health</h2>
-            <p class="text-xs text-neutral-400">Sincronizado automaticamente com SE2</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-rose-500 fill-current" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-black text-white tracking-tight">Apple Watch Health</h2>
+              <p class="text-xs text-neutral-400">Sincronizado automaticamente com SE2</p>
+            </div>
           </div>
           <div id="last-sync" class="text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 px-3.5 py-1.5 rounded-full">
             Carregando...
@@ -178,7 +231,7 @@
         </div>
       </section>
 
-      <!-- ================= ABA 2: ESTUDOS (PÁGINA INTEIRA / FULL SCREEN) ================= -->
+      <!-- ================= ABA 2: ESTUDOS (FULL SCREEN) ================= -->
       <section id="tab-content-studies" class="hidden w-full h-full p-0 m-0 bg-white">
         <iframe 
           id="studies-frame"
@@ -244,6 +297,20 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // ================= CONTROLE DA SIDEBAR (EXPANDIR / RECOLHER) =================
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('collapsed');
+      const isCollapsed = sidebar.classList.contains('collapsed');
+      localStorage.setItem('hub_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+    }
+
+    function initSidebarState() {
+      if (localStorage.getItem('hub_sidebar_collapsed') === 'true') {
+        document.getElementById('sidebar').classList.add('collapsed');
+      }
+    }
+
     // ================= BLOQUEIO / PIN =================
     const CORRECT_PIN = "2026";
     let currentInputPin = "";
@@ -297,6 +364,7 @@
     function unlockApp() {
       document.getElementById('lockscreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
+      initSidebarState();
       loadHealthData();
     }
 

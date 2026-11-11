@@ -18,14 +18,15 @@
       background: #1C1C1E;
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .tab-btn.active {
-      background: rgba(255, 255, 255, 0.14);
+    .nav-item.active {
+      background: rgba(255, 255, 255, 0.12);
       color: #FFFFFF;
       font-weight: 700;
+      border-left: 3px solid #34D399;
     }
   </style>
 </head>
-<body class="min-h-screen pb-24 sm:pb-10">
+<body class="min-h-screen bg-black">
 
   <!-- ================= TELA DE BLOQUEIO (PIN) ================= -->
   <div id="lockscreen" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-6">
@@ -36,7 +37,6 @@
         <p class="text-xs text-neutral-400 mt-1">Digite seu PIN de 4 dígitos</p>
       </div>
 
-      <!-- Indicadores de bolinhas do PIN -->
       <div class="flex justify-center gap-4 py-2">
         <div id="dot-0" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
         <div id="dot-1" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
@@ -45,7 +45,6 @@
       </div>
       <p id="pin-error" class="text-xs text-rose-500 font-medium h-4"></p>
 
-      <!-- Teclado Numérico Estilo iOS -->
       <div class="grid grid-cols-3 gap-3.5 pt-2">
         <button onclick="pressPin('1')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800">1</button>
         <button onclick="pressPin('2')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800">2</button>
@@ -60,182 +59,212 @@
         <button onclick="pressPin('0')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800">0</button>
         <button onclick="deletePin()" class="h-16 rounded-full flex items-center justify-center text-sm font-semibold text-neutral-400 active:text-white">Apagar</button>
       </div>
-      <p class="text-[11px] text-neutral-600">PIN padrão inicial: 2026</p>
+      <p class="text-[11px] text-neutral-600">PIN padrão: 2026</p>
     </div>
   </div>
 
-  <!-- ================= APLICAÇÃO PRINCIPAL ================= -->
-  <div id="app" class="hidden max-w-5xl mx-auto p-4 sm:p-8 space-y-6">
+  <!-- ================= LAYOUT PRINCIPAL COM SIDEBAR ================= -->
+  <div id="app" class="hidden min-h-screen flex flex-col md:flex-row">
 
-    <!-- Top Bar com Perfil & Logout -->
-    <header class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-          
-        </div>
-        <div>
-          <h1 class="text-xl font-black text-white tracking-tight">Personal Hub</h1>
-          <p id="app-subtitle" class="text-xs text-neutral-400">Apple Watch • Saúde</p>
-        </div>
-      </div>
-      <button onclick="lockApp()" class="text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white px-3 py-1.5 rounded-full transition">
-        🔒 Bloquear
-      </button>
-    </header>
-
-    <!-- Barra de Navegação de Abas -->
-    <nav class="flex bg-neutral-900/90 backdrop-blur p-1 rounded-2xl border border-neutral-800 sticky top-4 z-40">
-      <button id="tab-btn-health" onclick="switchTab('health')" class="tab-btn active flex-1 py-2 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white flex items-center justify-center gap-1.5">
-        <span></span> <span>Saúde</span>
-      </button>
-      <button id="tab-btn-studies" onclick="switchTab('studies')" class="tab-btn flex-1 py-2 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white flex items-center justify-center gap-1.5">
-        <span>📚</span> <span>Estudos</span>
-      </button>
-      <button id="tab-btn-finance" onclick="switchTab('finance')" class="tab-btn flex-1 py-2 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white flex items-center justify-center gap-1.5">
-        <span>💰</span> <span>Finanças</span>
-      </button>
-    </nav>
-
-    <!-- ================= CONTEÚDO DA ABA 1: SAÚDE (APPLE WATCH) ================= -->
-    <section id="tab-content-health" class="space-y-6">
-      <!-- Cards Principais -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-neutral-400 mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Passos</span>
-            <span class="text-base">👟</span>
-          </div>
-          <div id="today-steps" class="text-3xl font-black text-white">--</div>
-          <div class="mt-3">
-            <div class="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
-              <div id="steps-bar" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
-            <p id="steps-meta" class="text-[11px] text-neutral-400 mt-1.5">Meta: 10.000</p>
-          </div>
-        </div>
-
-        <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-neutral-400 mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Calorias Ativas</span>
-            <span class="text-base">🔥</span>
-          </div>
-          <div id="today-calories" class="text-3xl font-black text-white">-- <span class="text-sm font-normal text-neutral-400">kcal</span></div>
-          <p class="text-[11px] text-neutral-400 mt-3">Gasto do dia</p>
-        </div>
-
-        <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
-          <div class="flex items-center justify-between text-neutral-400 mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Sono</span>
-            <span class="text-base">🌙</span>
-          </div>
-          <div id="today-sleep" class="text-3xl font-black text-white">-- <span class="text-sm font-normal text-neutral-400">h</span></div>
-          <p class="text-[11px] text-neutral-400 mt-3">Última noite monitorada</p>
-        </div>
-      </div>
-
-      <!-- Gráfico Apple Health -->
-      <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800 pb-4">
-          <div>
-            <span id="chart-metric-label" class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Média diária</span>
-            <div class="flex items-baseline gap-2 mt-0.5">
-              <span id="chart-metric-value" class="text-2xl sm:text-3xl font-black text-white">--</span>
-              <span id="chart-metric-unit" class="text-xs text-neutral-400 font-medium"></span>
-            </div>
-          </div>
-          <div class="bg-neutral-900 p-1 rounded-xl border border-neutral-800 flex items-center gap-1 w-full sm:w-auto">
-            <button id="btn-tab-steps" onclick="setChartMetric('steps')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-neutral-800 text-emerald-400">👟 Passos</button>
-            <button id="btn-tab-calories" onclick="setChartMetric('calories')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold text-neutral-400 hover:text-white">🔥 Calorias</button>
-            <button id="btn-tab-sleep" onclick="setChartMetric('sleep')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold text-neutral-400 hover:text-white">🌙 Sono</button>
-          </div>
-        </div>
-        <div class="relative h-64 sm:h-72 w-full pt-1">
-          <canvas id="healthChart"></canvas>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= CONTEÚDO DA ABA 2: ESTUDOS (APPS SCRIPT) ================= -->
-    <section id="tab-content-studies" class="hidden space-y-4">
-      <div class="card-apple rounded-2xl p-4 flex justify-between items-center">
-        <div>
-          <h2 class="text-base font-bold text-white">Central de Estudos</h2>
-          <p class="text-xs text-neutral-400">Sincronizado via Google Apps Script</p>
-        </div>
-        <a href="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" target="_blank" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-3 py-1.5 rounded-lg transition border border-neutral-700">
-          Abrir em Nova Guia ↗
-        </a>
-      </div>
-      <div class="card-apple rounded-3xl overflow-hidden shadow-2xl h-[75vh]">
-        <iframe 
-          src="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" 
-          class="w-full h-full border-0 bg-white"
-          allow="fullscreen">
-        </iframe>
-      </div>
-    </section>
-
-    <!-- ================= CONTEÚDO DA ABA 3: FINANÇAS (SUPABASE) ================= -->
-    <section id="tab-content-finance" class="hidden space-y-6">
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="w-full md:w-64 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-5 flex flex-col justify-between shrink-0 md:h-screen md:sticky md:top-0">
       
-      <!-- Resumo Financeiro -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div class="card-apple rounded-2xl p-5">
-          <span class="text-xs font-bold uppercase tracking-wider text-neutral-400">Saldo Atual</span>
-          <div id="fin-balance" class="text-2xl sm:text-3xl font-black text-white mt-1">R$ 0,00</div>
-          <span class="text-[11px] text-neutral-500 mt-1 block">Balanço líquido</span>
+      <!-- Topo: Marca e Menu -->
+      <div class="space-y-6">
+        <!-- Logo e Título -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-amber-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+            
+          </div>
+          <div>
+            <h1 class="text-base font-black text-white tracking-tight">Personal Hub</h1>
+            <p class="text-[11px] text-neutral-400">Dashboard & Rotina</p>
+          </div>
         </div>
-        <div class="card-apple rounded-2xl p-5">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Entradas</span>
-          <div id="fin-income" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-1">R$ 0,00</div>
-          <span class="text-[11px] text-neutral-500 mt-1 block">Total de receitas</span>
-        </div>
-        <div class="card-apple rounded-2xl p-5">
-          <span class="text-xs font-bold uppercase tracking-wider text-rose-400">Saídas</span>
-          <div id="fin-expense" class="text-2xl sm:text-3xl font-black text-rose-400 mt-1">R$ 0,00</div>
-          <span class="text-[11px] text-neutral-500 mt-1 block">Total de gastos</span>
-        </div>
-      </div>
 
-      <!-- Formulário de Novo Lançamento -->
-      <div class="card-apple rounded-2xl p-5">
-        <h3 class="text-sm font-bold text-white mb-3">Novo Lançamento</h3>
-        <form id="finance-form" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-          <input type="text" id="tx-desc" placeholder="Descrição (ex: Mercado)" required class="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-neutral-600 sm:col-span-2">
-          <input type="number" step="0.01" id="tx-amount" placeholder="Valor (R$)" required class="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-neutral-600">
-          <select id="tx-type" class="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-neutral-600">
-            <option value="expense">🔴 Despesa</option>
-            <option value="income">🟢 Receita</option>
-          </select>
-          <button type="submit" class="bg-white hover:bg-neutral-200 text-black font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition">
-            + Adicionar
+        <!-- Links Laterais -->
+        <nav class="space-y-1.5 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-2 md:pb-0">
+          <button id="nav-health" onclick="switchTab('health')" class="nav-item active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-lg"></span>
+            <span class="whitespace-nowrap">Saúde (Watch)</span>
           </button>
-        </form>
+          <button id="nav-studies" onclick="switchTab('studies')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-lg">📚</span>
+            <span class="whitespace-nowrap">Estudos</span>
+          </button>
+          <button id="nav-finance" onclick="switchTab('finance')" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
+            <span class="text-lg">💰</span>
+            <span class="whitespace-nowrap">Finanças</span>
+          </button>
+        </nav>
       </div>
 
-      <!-- Lista de Transações Recentes -->
-      <div class="card-apple rounded-2xl p-5 space-y-3">
-        <div class="flex justify-between items-center">
-          <h3 class="text-sm font-bold text-white">Últimas Transações</h3>
-          <button onclick="loadFinanceData()" class="text-xs text-neutral-400 hover:text-white">Atualizar</button>
+      <!-- Rodapé da Sidebar: Status & Bloquear -->
+      <div class="pt-4 border-t border-neutral-800/80 flex items-center justify-between md:flex-col md:items-stretch gap-3">
+        <div class="text-[11px] text-neutral-500 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Online</span>
         </div>
-        <div id="finance-list" class="divide-y divide-neutral-800/80">
-          <p class="text-xs text-neutral-500 py-3 text-center">Nenhum lançamento encontrado.</p>
-        </div>
+        <button onclick="lockApp()" class="flex items-center justify-center gap-2 text-xs bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-400 hover:text-white px-3 py-2 rounded-xl transition">
+          <span>🔒</span> <span>Bloquear</span>
+        </button>
       </div>
 
-    </section>
+    </aside>
 
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 p-4 sm:p-8 max-w-6xl overflow-y-auto">
+
+      <!-- ================= ABA 1: SAÚDE ================= -->
+      <section id="tab-content-health" class="space-y-6">
+        <header class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
+          <div>
+            <h2 class="text-2xl font-black text-white tracking-tight">Apple Watch Health</h2>
+            <p class="text-xs text-neutral-400">Sincronizado automaticamente com SE2</p>
+          </div>
+          <div id="last-sync" class="text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 px-3.5 py-1.5 rounded-full">
+            Carregando...
+          </div>
+        </header>
+
+        <!-- Cards de Métricas -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-neutral-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Passos</span>
+              <span class="text-base">👟</span>
+            </div>
+            <div id="today-steps" class="text-3xl font-black text-white">--</div>
+            <div class="mt-3">
+              <div class="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+                <div id="steps-bar" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+              </div>
+              <p id="steps-meta" class="text-[11px] text-neutral-400 mt-1.5">Meta: 10.000</p>
+            </div>
+          </div>
+
+          <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-neutral-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Calorias Ativas</span>
+              <span class="text-base">🔥</span>
+            </div>
+            <div id="today-calories" class="text-3xl font-black text-white">-- <span class="text-sm font-normal text-neutral-400">kcal</span></div>
+            <p class="text-[11px] text-neutral-400 mt-3">Gasto do dia</p>
+          </div>
+
+          <div class="card-apple rounded-2xl p-5 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-neutral-400 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Sono</span>
+              <span class="text-base">🌙</span>
+            </div>
+            <div id="today-sleep" class="text-3xl font-black text-white">-- <span class="text-sm font-normal text-neutral-400">h</span></div>
+            <p class="text-[11px] text-neutral-400 mt-3">Última noite monitorada</p>
+          </div>
+        </div>
+
+        <!-- Gráfico com Seletor -->
+        <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800 pb-4">
+            <div>
+              <span id="chart-metric-label" class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Média diária</span>
+              <div class="flex items-baseline gap-2 mt-0.5">
+                <span id="chart-metric-value" class="text-2xl sm:text-3xl font-black text-white">--</span>
+                <span id="chart-metric-unit" class="text-xs text-neutral-400 font-medium"></span>
+              </div>
+            </div>
+            <div class="bg-neutral-900 p-1 rounded-xl border border-neutral-800 flex items-center gap-1 w-full sm:w-auto">
+              <button id="btn-tab-steps" onclick="setChartMetric('steps')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-neutral-800 text-emerald-400">👟 Passos</button>
+              <button id="btn-tab-calories" onclick="setChartMetric('calories')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold text-neutral-400 hover:text-white">🔥 Calorias</button>
+              <button id="btn-tab-sleep" onclick="setChartMetric('sleep')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold text-neutral-400 hover:text-white">🌙 Sono</button>
+            </div>
+          </div>
+          <div class="relative h-64 sm:h-72 w-full pt-1">
+            <canvas id="healthChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ABA 2: ESTUDOS ================= -->
+      <section id="tab-content-studies" class="hidden space-y-4">
+        <header class="flex justify-between items-center border-b border-neutral-800/80 pb-4">
+          <div>
+            <h2 class="text-2xl font-black text-white tracking-tight">Central de Estudos</h2>
+            <p class="text-xs text-neutral-400">Google Apps Script integrado</p>
+          </div>
+          <a href="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" target="_blank" class="text-xs bg-neutral-800 hover:bg-neutral-700 text-neutral-200 px-3.5 py-2 rounded-xl transition border border-neutral-700">
+            Abrir em Tela Cheia ↗
+          </a>
+        </header>
+        <div class="card-apple rounded-3xl overflow-hidden shadow-2xl h-[78vh]">
+          <iframe 
+            src="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" 
+            class="w-full h-full border-0 bg-white"
+            allow="fullscreen">
+          </iframe>
+        </div>
+      </section>
+
+      <!-- ================= ABA 3: FINANÇAS ================= -->
+      <section id="tab-content-finance" class="hidden space-y-6">
+        <header class="border-b border-neutral-800/80 pb-4">
+          <h2 class="text-2xl font-black text-white tracking-tight">Controle Financeiro</h2>
+          <p class="text-xs text-neutral-400">Gerenciamento no Supabase</p>
+        </header>
+
+        <!-- Resumo -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="card-apple rounded-2xl p-5">
+            <span class="text-xs font-bold uppercase tracking-wider text-neutral-400">Saldo Atual</span>
+            <div id="fin-balance" class="text-2xl sm:text-3xl font-black text-white mt-1">R$ 0,00</div>
+          </div>
+          <div class="card-apple rounded-2xl p-5">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Entradas</span>
+            <div id="fin-income" class="text-2xl sm:text-3xl font-black text-emerald-400 mt-1">R$ 0,00</div>
+          </div>
+          <div class="card-apple rounded-2xl p-5">
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-400">Saídas</span>
+            <div id="fin-expense" class="text-2xl sm:text-3xl font-black text-rose-400 mt-1">R$ 0,00</div>
+          </div>
+        </div>
+
+        <!-- Novo Lançamento -->
+        <div class="card-apple rounded-2xl p-5">
+          <h3 class="text-sm font-bold text-white mb-3">Novo Lançamento</h3>
+          <form id="finance-form" onsubmit="addTransaction(event)" class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <input type="text" id="tx-desc" placeholder="Descrição (ex: Restaurante)" required class="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-neutral-600 sm:col-span-2">
+            <input type="number" step="0.01" id="tx-amount" placeholder="Valor (R$)" required class="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-neutral-600">
+            <select id="tx-type" class="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-neutral-600">
+              <option value="expense">🔴 Despesa</option>
+              <option value="income">🟢 Receita</option>
+            </select>
+            <button type="submit" class="bg-white hover:bg-neutral-200 text-black font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition">
+              + Adicionar
+            </button>
+          </form>
+        </div>
+
+        <!-- Lista Recente -->
+        <div class="card-apple rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-bold text-white">Últimas Transações</h3>
+            <button onclick="loadFinanceData()" class="text-xs text-neutral-400 hover:text-white">Atualizar</button>
+          </div>
+          <div id="finance-list" class="divide-y divide-neutral-800/80">
+            <p class="text-xs text-neutral-500 py-3 text-center">Nenhum lançamento encontrado.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
   <script>
-    // ================= CONFIGURAÇÃO SUPABASE =================
     const SUPABASE_URL = "https://dhozzuhlwojwajvilaob.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ================= SISTEMA DE PIN (BLOQUEIO) =================
-    const CORRECT_PIN = "2026"; // Altere aqui se preferir outro PIN
+    // ================= BLOQUEIO / PIN =================
+    const CORRECT_PIN = "2026";
     let currentInputPin = "";
 
     function checkSavedSession() {
@@ -299,30 +328,23 @@
       document.getElementById('lockscreen').classList.remove('hidden');
     }
 
-    // ================= NAVEGAÇÃO DE ABAS =================
+    // ================= NAVEGAÇÃO LATERAL =================
     function switchTab(tabId) {
       const tabs = ['health', 'studies', 'finance'];
       tabs.forEach(t => {
         document.getElementById(`tab-content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-btn-${t}`).classList.remove('active');
+        document.getElementById(`nav-${t}`).classList.remove('active');
       });
 
       document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
-      document.getElementById(`tab-btn-${tabId}`).classList.add('active');
-
-      const subtitles = {
-        health: "Apple Watch • Métricas de Saúde",
-        studies: "Google Apps Script • Estudos",
-        finance: "Supabase • Controle Financeiro"
-      };
-      document.getElementById('app-subtitle').innerText = subtitles[tabId];
+      document.getElementById(`nav-${tabId}`).classList.add('active');
 
       if (tabId === 'finance') {
         loadFinanceData();
       }
     }
 
-    // ================= LÓGICA DE SAÚDE (APPLE WATCH) =================
+    // ================= DADOS DE SAÚDE =================
     let rawHealthData = [];
     let currentChart = null;
     let selectedMetric = 'steps';
@@ -347,6 +369,11 @@
         const pct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
         document.getElementById('steps-bar').style.width = `${pct}%`;
         document.getElementById('steps-meta').innerText = `${pct}% da meta de 10.000 passos`;
+
+        if (latest.updated_at) {
+          const d = new Date(latest.updated_at);
+          document.getElementById('last-sync').innerText = `Sync: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        }
 
         renderCurrentChart();
       } catch (err) {
@@ -429,7 +456,7 @@
       });
     }
 
-    // ================= LÓGICA DE FINANÇAS (SUPABASE) =================
+    // ================= FINANÇAS =================
     async function loadFinanceData() {
       try {
         const { data, error } = await supabaseClient
@@ -438,13 +465,9 @@
           .order('date', { ascending: false })
           .limit(20);
 
-        if (error) {
-          console.error("Erro Finanças:", error);
-          return;
-        }
+        if (error) return;
 
-        let income = 0;
-        let expense = 0;
+        let income = 0, expense = 0;
         const listEl = document.getElementById('finance-list');
 
         if (!data || data.length === 0) {
@@ -479,7 +502,7 @@
 
         updateBalanceDisplay(income, expense);
       } catch (err) {
-        console.error("Falha ao carregar finanças:", err);
+        console.error("Falha finanças:", err);
       }
     }
 
@@ -505,7 +528,7 @@
       ]);
 
       if (error) {
-        alert("Erro ao adicionar lançamento: " + error.message);
+        alert("Erro ao adicionar: " + error.message);
         return;
       }
 
@@ -520,7 +543,6 @@
       loadFinanceData();
     }
 
-    // Inicialização
     checkSavedSession();
   </script>
 </body>

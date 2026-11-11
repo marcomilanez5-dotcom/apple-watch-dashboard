@@ -11,77 +11,124 @@
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background-color: #0b0f19; color: #f3f4f6; }
+    body {
+      background-color: #000000;
+      color: #F5F5F7;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .card-apple {
+      background: #1C1C1E;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
   </style>
 </head>
 <body class="p-4 sm:p-8 min-h-screen">
-  <div class="max-w-5xl mx-auto space-y-6">
-    
-    <!-- Cabeçalho -->
-    <header class="flex justify-between items-center border-b border-gray-800 pb-4">
+  <div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Cabeçalho Apple Health -->
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-neutral-800 pb-5">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-400 via-pink-500 to-indigo-400 bg-clip-text text-transparent">
-          Apple Watch Health Hub
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xs font-semibold uppercase tracking-wider text-rose-500">Resumo de Saúde</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          Apple Watch SE2
         </h1>
-        <p class="text-xs sm:text-sm text-gray-400">Sincronizado automaticamente com Apple Watch SE2</p>
       </div>
-      <div id="last-sync" class="text-xs text-gray-500 text-right">Carregando...</div>
+      <div id="last-sync" class="text-xs text-neutral-400 bg-neutral-900 border border-neutral-800 px-3.5 py-1.5 rounded-full">
+        Carregando sincronização...
+      </div>
     </header>
 
     <!-- Cards Principais (Hoje) -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
       <!-- Card Passos -->
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
-        <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-sm font-medium">Passos Hoje</span>
-          <span class="text-xl">👟</span>
+      <div class="card-apple rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-neutral-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Passos</span>
+          <span class="text-base">👟</span>
         </div>
-        <div id="today-steps" class="text-3xl font-bold text-emerald-400">--</div>
-        <p class="text-xs text-gray-500 mt-2">Meta: 10.000 passos</p>
+        <div id="today-steps" class="text-3xl font-black text-white">--</div>
+        <div class="mt-3">
+          <div class="w-full bg-neutral-800 rounded-full h-1.5 overflow-hidden">
+            <div id="steps-bar" class="bg-emerald-400 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <p id="steps-meta" class="text-[11px] text-neutral-400 mt-1.5">Meta: 10.000</p>
+        </div>
       </div>
 
       <!-- Card Calorias -->
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
-        <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-sm font-medium">Calorias Ativas</span>
-          <span class="text-xl">🔥</span>
+      <div class="card-apple rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-neutral-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-orange-400">Movimento</span>
+          <span class="text-base">🔥</span>
         </div>
-        <div id="today-calories" class="text-3xl font-bold text-orange-400">-- <span class="text-sm font-normal text-gray-400">kcal</span></div>
-        <p class="text-xs text-gray-500 mt-2">Movimento no dia</p>
+        <div id="today-calories" class="text-3xl font-black text-white">-- <span class="text-sm font-normal text-neutral-400">kcal</span></div>
+        <p class="text-[11px] text-neutral-400 mt-3">Gasto ativo do dia</p>
       </div>
 
       <!-- Card Sono -->
-      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-5 shadow-lg">
-        <div class="flex items-center justify-between text-gray-400 mb-2">
-          <span class="text-sm font-medium">Horas de Sono</span>
-          <span class="text-xl">🌙</span>
+      <div class="card-apple rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-neutral-400 mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Sono</span>
+          <span class="text-base">🌙</span>
         </div>
-        <div id="today-sleep" class="text-3xl font-bold text-indigo-400">-- <span class="text-sm font-normal text-gray-400">h</span></div>
-        <p class="text-xs text-gray-500 mt-2">Noite anterior</p>
+        <div id="today-sleep" class="text-3xl font-black text-white">-- <span class="text-sm font-normal text-neutral-400">h</span></div>
+        <p class="text-[11px] text-neutral-400 mt-3">Última noite monitorada</p>
       </div>
     </div>
 
-    <!-- Gráfico Histórico -->
-    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-lg">
-      <h2 class="text-lg font-semibold text-gray-200 mb-4">Histórico Recente</h2>
-      <div class="relative h-72 w-full">
+    <!-- Seção do Gráfico Estilo Apple Health -->
+    <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4">
+      
+      <!-- Controles Superiores: Título + Média + Segmented Control -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800/80 pb-4">
+        <div>
+          <span id="chart-metric-label" class="text-xs font-semibold uppercase tracking-wider text-neutral-400">Média diária</span>
+          <div class="flex items-baseline gap-2 mt-0.5">
+            <span id="chart-metric-value" class="text-2xl sm:text-3xl font-black text-white">--</span>
+            <span id="chart-metric-unit" class="text-xs text-neutral-400 font-medium"></span>
+          </div>
+        </div>
+
+        <!-- Seletor em Pílulas (Estilo iOS) -->
+        <div class="bg-neutral-900 p-1 rounded-xl border border-neutral-800 flex items-center gap-1 w-full sm:w-auto">
+          <button id="btn-tab-steps" onclick="setChartMetric('steps')" 
+                  class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-neutral-800 text-emerald-400 shadow-sm">
+            👟 Passos
+          </button>
+          <button id="btn-tab-calories" onclick="setChartMetric('calories')" 
+                  class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-neutral-400 hover:text-white">
+            🔥 Calorias
+          </button>
+          <button id="btn-tab-sleep" onclick="setChartMetric('sleep')" 
+                  class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-neutral-400 hover:text-white">
+            🌙 Sono
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas do Gráfico -->
+      <div class="relative h-64 sm:h-72 w-full pt-1">
         <canvas id="healthChart"></canvas>
       </div>
+
     </div>
 
   </div>
 
-    <script>
-    // CONFIGURAÇÃO DO SEU SUPABASE
+  <script>
     const SUPABASE_URL = "https://dhozzuhlwojwajvilaob.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
-
-    // Renomeado para evitar conflito com a variável global window.supabase
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let rawData = [];
+    let currentChart = null;
+    let selectedMetric = 'steps'; // 'steps' | 'calories' | 'sleep'
 
     async function loadHealthData() {
       try {
-        // Busca os últimos 14 registros ordenados por data
         const { data, error } = await supabaseClient
           .from('health_metrics')
           .select('*')
@@ -90,89 +137,154 @@
 
         if (error) {
           console.error("Erro ao carregar dados:", error);
-          document.getElementById('last-sync').innerText = "Erro ao carregar dados";
+          document.getElementById('last-sync').innerText = "Erro ao carregar";
           return;
         }
 
         if (!data || data.length === 0) {
-          document.getElementById('last-sync').innerText = "Nenhum dado encontrado";
+          document.getElementById('last-sync').innerText = "Sem dados";
           return;
         }
 
-        // Pega o registro mais recente
+        rawData = data;
+
+        // Último dia registrado
         const latest = data[data.length - 1];
+        const stepsVal = Number(latest.steps || 0);
+        const caloriesVal = Number(latest.calories || 0);
+        const sleepVal = Number(latest.sleep_hours || 0);
 
-        document.getElementById('today-steps').innerText = Number(latest.steps || 0).toLocaleString('pt-BR');
-        document.getElementById('today-calories').innerHTML = `${Number(latest.calories || 0).toFixed(0)} <span class="text-sm font-normal text-gray-400">kcal</span>`;
-        document.getElementById('today-sleep').innerHTML = `${Number(latest.sleep_hours || 0).toFixed(1)} <span class="text-sm font-normal text-gray-400">h</span>`;
+        document.getElementById('today-steps').innerText = stepsVal.toLocaleString('pt-BR');
+        document.getElementById('today-calories').innerHTML = `${caloriesVal.toFixed(0)} <span class="text-sm font-normal text-neutral-400">kcal</span>`;
+        document.getElementById('today-sleep').innerHTML = `${sleepVal.toFixed(1)} <span class="text-sm font-normal text-neutral-400">h</span>`;
 
+        // Barra de progresso dos passos
+        const pct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
+        document.getElementById('steps-bar').style.width = `${pct}%`;
+        document.getElementById('steps-meta').innerText = `${pct}% da meta de 10.000 passos`;
+
+        // Última sincronização
         if (latest.updated_at) {
           const d = new Date(latest.updated_at);
-          document.getElementById('last-sync').innerText = `Última sincronização:\n${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+          document.getElementById('last-sync').innerText = `Sync: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
         }
 
-        // Prepara os dados para o gráfico
-        const labels = data.map(item => {
-          const parts = item.date.split('-');
-          return `${parts[2]}/${parts[1]}`;
-        });
-        const stepsData = data.map(item => Number(item.steps || 0));
-        const caloriesData = data.map(item => Number(item.calories || 0));
-
-        renderChart(labels, stepsData, caloriesData);
+        renderCurrentChart();
       } catch (err) {
         console.error("Falha ao processar dados:", err);
       }
     }
 
-    function renderChart(labels, steps, calories) {
+    function setChartMetric(metric) {
+      selectedMetric = metric;
+
+      const btnSteps = document.getElementById('btn-tab-steps');
+      const btnCal = document.getElementById('btn-tab-calories');
+      const btnSleep = document.getElementById('btn-tab-sleep');
+
+      const inactiveClass = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition text-neutral-400 hover:text-white";
+      btnSteps.className = inactiveClass;
+      btnCal.className = inactiveClass;
+      btnSleep.className = inactiveClass;
+
+      if (metric === 'steps') {
+        btnSteps.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-neutral-800 text-emerald-400 shadow-sm";
+      } else if (metric === 'calories') {
+        btnCal.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-neutral-800 text-orange-400 shadow-sm";
+      } else if (metric === 'sleep') {
+        btnSleep.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-neutral-800 text-indigo-400 shadow-sm";
+      }
+
+      renderCurrentChart();
+    }
+
+    function renderCurrentChart() {
+      if (!rawData || rawData.length === 0) return;
+
+      const labels = rawData.map(item => {
+        const parts = item.date.split('-');
+        return `${parts[2]}/${parts[1]}`;
+      });
+
+      let values = [];
+      let labelName = "";
+      let barColor = "";
+      let hoverColor = "";
+      let unit = "";
+
+      if (selectedMetric === 'steps') {
+        values = rawData.map(i => Number(i.steps || 0));
+        labelName = "Passos";
+        barColor = "rgba(52, 211, 153, 0.75)";
+        hoverColor = "rgba(52, 211, 153, 1)";
+        unit = "passos/dia";
+      } else if (selectedMetric === 'calories') {
+        values = rawData.map(i => Number(i.calories || 0));
+        labelName = "Calorias Ativas";
+        barColor = "rgba(251, 146, 60, 0.75)";
+        hoverColor = "rgba(251, 146, 60, 1)";
+        unit = "kcal/dia";
+      } else if (selectedMetric === 'sleep') {
+        values = rawData.map(i => Number(i.sleep_hours || 0));
+        labelName = "Tempo de Sono";
+        barColor = "rgba(129, 140, 248, 0.75)";
+        hoverColor = "rgba(129, 140, 248, 1)";
+        unit = "horas/noite";
+      }
+
+      // Calcula e exibe a média da métrica atual
+      const total = values.reduce((a, b) => a + b, 0);
+      const avg = total / values.length;
+      document.getElementById('chart-metric-label').innerText = `Média recente (${labelName})`;
+      document.getElementById('chart-metric-value').innerText = selectedMetric === 'sleep' ? avg.toFixed(1) : Math.round(avg).toLocaleString('pt-BR');
+      document.getElementById('chart-metric-unit').innerText = unit;
+
       const ctx = document.getElementById('healthChart').getContext('2d');
-      new Chart(ctx, {
+
+      if (currentChart) {
+        currentChart.destroy();
+      }
+
+      currentChart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
-          datasets: [
-            {
-              label: 'Passos',
-              data: steps,
-              backgroundColor: 'rgba(52, 211, 153, 0.7)',
-              borderRadius: 6,
-              yAxisID: 'y'
-            },
-            {
-              label: 'Calorias (kcal)',
-              data: calories,
-              type: 'line',
-              borderColor: 'rgba(251, 146, 60, 1)',
-              backgroundColor: 'rgba(251, 146, 60, 0.2)',
-              borderWidth: 2,
-              tension: 0.3,
-              yAxisID: 'y1'
-            }
-          ]
+          datasets: [{
+            label: labelName,
+            data: values,
+            backgroundColor: barColor,
+            hoverBackgroundColor: hoverColor,
+            borderRadius: 6,
+            borderSkipped: false
+          }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { labels: { color: '#9ca3af' } }
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1C1C1E',
+              titleColor: '#FFFFFF',
+              bodyColor: '#E4E4E7',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 10,
+              cornerRadius: 10,
+              displayColors: false,
+              callbacks: {
+                label: (ctx) => `${ctx.parsed.y.toLocaleString('pt-BR')} ${selectedMetric === 'calories' ? 'kcal' : selectedMetric === 'sleep' ? 'h' : 'passos'}`
+              }
+            }
           },
           scales: {
             x: {
-              grid: { color: 'rgba(255, 255, 255, 0.05)' },
-              ticks: { color: '#9ca3af' }
+              grid: { display: false },
+              ticks: { color: '#71717A', font: { size: 11 } }
             },
             y: {
-              type: 'linear',
-              position: 'left',
               grid: { color: 'rgba(255, 255, 255, 0.05)' },
-              ticks: { color: '#34d399' }
-            },
-            y1: {
-              type: 'linear',
-              position: 'right',
-              grid: { drawOnChartArea: false },
-              ticks: { color: '#fb923c' }
+              ticks: { color: '#71717A', font: { size: 11 } }
             }
           }
         }

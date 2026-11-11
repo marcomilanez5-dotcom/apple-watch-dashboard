@@ -25,9 +25,11 @@
       border-left: 3px solid #34D399;
     }
 
-    /* Estado da Sidebar Recolhida */
+    /* Estado da Sidebar Recolhida (Ultrafina / Compacta) */
     #sidebar.collapsed {
-      width: 4.5rem !important;
+      width: 3.25rem !important;
+      padding-left: 0.35rem !important;
+      padding-right: 0.35rem !important;
     }
     #sidebar.collapsed .sidebar-text {
       display: none !important;
@@ -36,13 +38,17 @@
       justify-content: center !important;
       padding-left: 0 !important;
       padding-right: 0 !important;
+      border-left: none !important;
+      border-radius: 0.75rem !important;
     }
     #sidebar.collapsed .sidebar-header {
       justify-content: center !important;
+      padding: 0 !important;
     }
     #sidebar.collapsed .sidebar-footer {
       justify-content: center !important;
       flex-direction: column !important;
+      padding: 0 !important;
     }
     #sidebar.collapsed #toggle-icon {
       transform: rotate(180deg);
@@ -89,25 +95,17 @@
   <!-- ================= LAYOUT PRINCIPAL ================= -->
   <div id="app" class="hidden h-full flex flex-col md:flex-row overflow-hidden">
 
-    <!-- BARRA LATERAL (SIDEBAR COM RECOLHIMENTO) -->
-    <aside id="sidebar" class="w-full md:w-60 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-3.5 flex flex-col justify-between shrink-0 z-30 transition-all duration-300">
+    <!-- BARRA LATERAL (SIDEBAR COM RECOLHIMENTO ULTRAFINO) -->
+    <aside id="sidebar" class="w-full md:w-56 bg-[#121214] border-b md:border-b-0 md:border-r border-neutral-800/80 p-3.5 flex flex-col justify-between shrink-0 z-30 transition-all duration-300">
       
       <div class="space-y-4">
-        <!-- Cabeçalho da Sidebar + Botão Toggle -->
+        <!-- Topo da Sidebar (Apenas Texto Hub OS + Botão de Recolher) -->
         <div class="sidebar-header flex items-center justify-between px-1">
-          <div class="flex items-center gap-2.5 overflow-hidden">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 flex items-center justify-center text-white shrink-0 shadow-md">
-              <!-- Ícone de Coração/Saúde Oficial -->
-              <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-            </div>
-            <div class="sidebar-text">
-              <h1 class="text-sm font-black text-white tracking-tight leading-none">Hub OS</h1>
-              <p class="text-[10px] text-neutral-400 mt-0.5">Dashboard</p>
-            </div>
+          <div class="sidebar-text overflow-hidden">
+            <h1 class="text-sm font-black text-white tracking-tight leading-none">Hub OS</h1>
+            <p class="text-[10px] text-neutral-400 mt-0.5">Dashboard</p>
           </div>
-          <!-- Botão de Recolher/Expandir -->
+          <!-- Botão Toggle -->
           <button onclick="toggleSidebar()" title="Recolher/Expandir menu" class="hidden md:flex items-center justify-center w-7 h-7 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800/80 transition">
             <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
@@ -118,7 +116,7 @@
         <!-- Links da Navegação -->
         <nav class="space-y-1 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-1 md:pb-0">
           
-          <!-- Aba 1: Saúde (com Ícone de Coração/Saúde SVG) -->
+          <!-- Aba 1: Saúde -->
           <button id="nav-health" onclick="switchTab('health')" title="Saúde" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition text-neutral-400 hover:text-white hover:bg-neutral-800/50 text-left">
             <svg class="w-4 h-4 text-rose-500 shrink-0 fill-current" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -297,7 +295,7 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ================= CONTROLE DA SIDEBAR (EXPANDIR / RECOLHER) =================
+    // ================= CONTROLE DA SIDEBAR (EXPANDIR / RECOLHER ULTRAFINO) =================
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('collapsed');

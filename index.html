@@ -71,49 +71,58 @@
 
   </div>
 
-  <script>
+    <script>
     // CONFIGURAÇÃO DO SEU SUPABASE
     const SUPABASE_URL = "https://dhozzuhlwojwajvilaob.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4"; // <-- COLE SUA PUBLISHABLE KEY AQUI
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Renomeado para evitar conflito com a variável global window.supabase
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadHealthData() {
-      // Busca os últimos 14 registros ordenados por data
-      const { data, error } = await supabase
-        .from('health_metrics')
-        .select('*')
-        .order('date', { ascending: true })
-        .limit(14);
+      try {
+        // Busca os últimos 14 registros ordenados por data
+        const { data, error } = await supabaseClient
+          .from('health_metrics')
+          .select('*')
+          .order('date', { ascending: true })
+          .limit(14);
 
-      if (error) {
-        console.error("Erro ao carregar dados:", error);
-        return;
+        if (error) {
+          console.error("Erro ao carregar dados:", error);
+          document.getElementById('last-sync').innerText = "Erro ao carregar dados";
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          document.getElementById('last-sync').innerText = "Nenhum dado encontrado";
+          return;
+        }
+
+        // Pega o registro mais recente
+        const latest = data[data.length - 1];
+
+        document.getElementById('today-steps').innerText = Number(latest.steps || 0).toLocaleString('pt-BR');
+        document.getElementById('today-calories').innerHTML = `${Number(latest.calories || 0).toFixed(0)} <span class="text-sm font-normal text-gray-400">kcal</span>`;
+        document.getElementById('today-sleep').innerHTML = `${Number(latest.sleep_hours || 0).toFixed(1)} <span class="text-sm font-normal text-gray-400">h</span>`;
+
+        if (latest.updated_at) {
+          const d = new Date(latest.updated_at);
+          document.getElementById('last-sync').innerText = `Última sincronização:\n${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        }
+
+        // Prepara os dados para o gráfico
+        const labels = data.map(item => {
+          const parts = item.date.split('-');
+          return `${parts[2]}/${parts[1]}`;
+        });
+        const stepsData = data.map(item => Number(item.steps || 0));
+        const caloriesData = data.map(item => Number(item.calories || 0));
+
+        renderChart(labels, stepsData, caloriesData);
+      } catch (err) {
+        console.error("Falha ao processar dados:", err);
       }
-
-      if (!data || data.length === 0) return;
-
-      // Pega o registro mais recente
-      const latest = data[data.length - 1];
-
-      document.getElementById('today-steps').innerText = Number(latest.steps || 0).toLocaleString('pt-BR');
-      document.getElementById('today-calories').innerHTML = `${Number(latest.calories || 0).toFixed(0)} <span class="text-sm font-normal text-gray-400">kcal</span>`;
-      document.getElementById('today-sleep').innerHTML = `${Number(latest.sleep_hours || 0).toFixed(1)} <span class="text-sm font-normal text-gray-400">h</span>`;
-
-      if (latest.updated_at) {
-        const d = new Date(latest.updated_at);
-        document.getElementById('last-sync').innerText = `Última sincronização:\n${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
-      }
-
-      // Prepara os dados para o gráfico
-      const labels = data.map(item => {
-        const parts = item.date.split('-');
-        return `${parts[2]}/${parts[1]}`;
-      });
-      const stepsData = data.map(item => Number(item.steps || 0));
-      const caloriesData = data.map(item => Number(item.calories || 0));
-
-      renderChart(labels, stepsData, caloriesData);
     }
 
     function renderChart(labels, steps, calories) {

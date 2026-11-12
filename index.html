@@ -68,11 +68,18 @@
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
+    /* Estilo ativo no Desktop */
     .nav-item.active {
       background: var(--nav-active-bg) !important;
       color: var(--text-main) !important;
       font-weight: 700;
       border-left: 3px solid #34D399;
+    }
+
+    /* Estilo ativo na TabBar Mobile */
+    .mobile-nav-item.active {
+      color: #34D399 !important;
+      transform: scale(1.1);
     }
 
     /* Inversão Visual Inteligente para o Apps Script no Modo Escuro */
@@ -83,7 +90,7 @@
       filter: none;
     }
 
-    /* Sidebar Recolhida Ultrafina */
+    /* Sidebar Recolhida no Desktop */
     #sidebar.collapsed {
       width: 3.25rem !important;
       padding-left: 0.35rem !important;
@@ -112,9 +119,13 @@
       transform: rotate(180deg);
     }
 
-    /* Anéis de Atividade Animados */
     .ring-circle {
       transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Ajuste de suporte para notch/barra home do iPhone */
+    .mobile-tab-bar {
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
     }
   </style>
 </head>
@@ -129,7 +140,6 @@
         <p class="text-xs text-neutral-400 mt-1">Digite seu PIN de 4 dígitos</p>
       </div>
 
-      <!-- Bolinhas Indicadoras -->
       <div class="flex justify-center gap-4 py-1">
         <div id="dot-0" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
         <div id="dot-1" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
@@ -138,7 +148,6 @@
       </div>
       <p id="pin-error" class="text-xs text-rose-500 font-medium h-4"></p>
 
-      <!-- Teclado Numérico -->
       <div class="grid grid-cols-3 gap-3 pt-1">
         <button onclick="pressPin('1')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white">1</button>
         <button onclick="pressPin('2')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white">2</button>
@@ -154,7 +163,6 @@
         <button onclick="deletePin()" class="h-16 rounded-full flex items-center justify-center text-sm font-semibold text-neutral-400 active:text-white">Apagar</button>
       </div>
 
-      <!-- Opção de Lembrar PIN -->
       <div class="flex items-center justify-center gap-2 pt-2">
         <input type="checkbox" id="remember-pin" class="rounded bg-neutral-900 border-neutral-700 text-emerald-500 focus:ring-0">
         <label for="remember-pin" class="text-xs text-neutral-400 select-none cursor-pointer">Lembrar neste aparelho (30 dias)</label>
@@ -166,8 +174,8 @@
   <!-- ================= LAYOUT PRINCIPAL ================= -->
   <div id="app" class="hidden h-full flex flex-col md:flex-row overflow-hidden">
 
-    <!-- BARRA LATERAL (SIDEBAR) -->
-    <aside id="sidebar" class="w-full md:w-56 p-3.5 flex flex-col justify-between shrink-0 z-30 transition-all duration-300 border-b md:border-b-0 md:border-r">
+    <!-- 1. BARRA LATERAL (APENAS PARA DESKTOP / IPAD: hidden no mobile, flex no md) -->
+    <aside id="sidebar" class="hidden md:flex w-56 p-3.5 flex-col justify-between shrink-0 z-30 transition-all duration-300 border-r border-[var(--border-color)]">
       
       <div class="space-y-4">
         <div class="sidebar-header flex items-center justify-between px-1">
@@ -175,14 +183,14 @@
             <h1 class="text-sm font-black tracking-tight leading-none">Hub OS</h1>
             <p class="text-[10px] opacity-60 mt-0.5">Dashboard</p>
           </div>
-          <button onclick="toggleSidebar()" title="Recolher/Expandir menu" class="hidden md:flex items-center justify-center w-7 h-7 rounded-lg opacity-60 hover:opacity-100 transition">
+          <button onclick="toggleSidebar()" title="Recolher/Expandir menu" class="flex items-center justify-center w-7 h-7 rounded-lg opacity-60 hover:opacity-100 transition">
             <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </button>
         </div>
 
-        <nav class="space-y-1 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-1 md:pb-0">
+        <nav class="space-y-1 flex flex-col">
           <button id="nav-health" onclick="switchTab('health')" title="Saúde" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
             <svg class="w-4 h-4 text-rose-500 shrink-0 fill-current" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -202,7 +210,7 @@
         </nav>
       </div>
 
-      <div class="sidebar-footer pt-3 border-t border-[var(--border-color)] flex items-center justify-between md:flex-col md:items-stretch gap-2">
+      <div class="sidebar-footer pt-3 border-t border-[var(--border-color)] flex flex-col gap-2">
         <button onclick="toggleTheme()" id="theme-btn" title="Alternar Modo Claro/Escuro" class="flex items-center justify-center gap-1.5 text-xs card-apple border px-2.5 py-1.5 rounded-xl transition opacity-80 hover:opacity-100">
           <span id="theme-icon">☀️</span>
           <span id="theme-text" class="sidebar-text">Modo Claro</span>
@@ -216,10 +224,10 @@
 
     </aside>
 
-    <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 h-full flex flex-col overflow-hidden relative">
+    <!-- ÁREA DE CONTEÚDO PRINCIPAL (com margem inferior no mobile para dar espaço à TabBar) -->
+    <main class="flex-1 h-full flex flex-col overflow-hidden relative pb-16 md:pb-0">
 
-      <!-- ================= ABA 1: SAÚDE (COM ANÉIS DE ATIVIDADE) ================= -->
+      <!-- ================= ABA 1: SAÚDE ================= -->
       <section id="tab-content-health" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         <header class="flex justify-between items-center border-b border-[var(--border-color)] pb-4">
           <div class="flex items-center gap-3">
@@ -229,29 +237,24 @@
               </svg>
             </div>
             <div>
-              <h2 class="text-2xl font-black tracking-tight">Apple Watch Health</h2>
-              <p class="text-xs opacity-60">Sincronizado automaticamente com SE2</p>
+              <h2 class="text-xl sm:text-2xl font-black tracking-tight">Apple Watch Health</h2>
+              <p class="text-xs opacity-60">Sincronizado automaticamente</p>
             </div>
           </div>
-          <div id="last-sync" class="text-xs opacity-75 card-apple border px-3.5 py-1.5 rounded-full">
-            Carregando...
+          <div id="last-sync" class="text-[11px] sm:text-xs opacity-75 card-apple border px-3 py-1.5 rounded-full text-right">
+            Sincronizando...
           </div>
         </header>
 
-        <!-- NOVO: Cartão de Anéis de Atividade Apple Watch -->
+        <!-- Anéis de Atividade Apple Watch -->
         <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
           <div class="flex items-center gap-5">
-            <!-- Anéis Concêntricos em SVG (Calorias + Passos) -->
             <div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
               <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                <!-- Anel 1 Fundo (Calorias) -->
                 <circle cx="50" cy="50" r="40" stroke="rgba(244, 63, 94, 0.15)" stroke-width="8" fill="none"/>
-                <!-- Anel 1 Progresso (Calorias) -->
                 <circle id="ring-cal-progress" class="ring-circle" cx="50" cy="50" r="40" stroke="#f43f5e" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
                 
-                <!-- Anel 2 Fundo (Passos) -->
                 <circle cx="50" cy="50" r="28" stroke="rgba(16, 185, 129, 0.15)" stroke-width="8" fill="none"/>
-                <!-- Anel 2 Progresso (Passos) -->
                 <circle id="ring-step-progress" class="ring-circle" cx="50" cy="50" r="28" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
               </svg>
               <span class="absolute text-xl"></span>
@@ -260,11 +263,11 @@
             <div>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Atividade Diária</span>
               <h3 class="text-lg font-black mt-0.5">Metas de Movimento</h3>
-              <p class="text-xs opacity-60 mt-0.5">Acompanhamento dos círculos de saúde</p>
+              <p class="text-xs opacity-60 mt-0.5">Círculos de saúde sincronizados com o Watch</p>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4 w-full sm:w-auto">
+          <div class="grid grid-cols-2 gap-3 w-full sm:w-auto">
             <div class="p-3 rounded-2xl bg-neutral-500/5 border border-[var(--border-color)]">
               <div class="flex items-center gap-1.5">
                 <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
@@ -350,19 +353,18 @@
       </section>
 
       <!-- ================= ABA 3: FINANÇAS ================= -->
-      <section id="tab-content-finance" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
+      <section id="tab-content-finance" class="hidden h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         
-        <!-- Cabeçalho de Finanças -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
           <div>
-            <h2 class="text-2xl font-black tracking-tight">Controle Financeiro</h2>
+            <h2 class="text-xl sm:text-2xl font-black tracking-tight">Controle Financeiro</h2>
             <p class="text-xs opacity-60">Supabase Database</p>
           </div>
           <div class="card-apple border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
-            <button id="btn-view-list" onclick="setFinanceView('list')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition">
-              📋 Lista de Transações
+            <button id="btn-view-list" onclick="setFinanceView('list')" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition">
+              📋 Transações
             </button>
-            <button id="btn-view-calendar" onclick="setFinanceView('calendar')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition">
+            <button id="btn-view-calendar" onclick="setFinanceView('calendar')" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition">
               📅 Calendário Anual
             </button>
           </div>
@@ -398,22 +400,22 @@
           </div>
         </div>
 
-        <!-- NOVO: Gráfico Donut de Despesas por Categoria -->
+        <!-- Gráfico Donut de Despesas por Categoria -->
         <div id="category-donut-container" class="card-apple rounded-3xl p-5 sm:p-6 border grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
           <div>
             <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Divisão de Gastos</span>
             <h3 class="text-lg font-black mt-0.5">Despesas por Categoria</h3>
-            <p class="text-xs opacity-60 mt-0.5">Onde o seu dinheiro está sendo investido no período selecionado</p>
+            <p class="text-xs opacity-60 mt-0.5">Onde seu dinheiro está concentrado no período</p>
             <div id="donut-legend" class="mt-4 space-y-1.5 text-xs max-h-40 overflow-y-auto pr-2">
               <!-- Legenda preenchida via JS -->
             </div>
           </div>
-          <div class="relative h-56 w-full flex items-center justify-center">
+          <div class="relative h-52 sm:h-56 w-full flex items-center justify-center">
             <canvas id="categoryDonutChart"></canvas>
           </div>
         </div>
 
-        <!-- Formulário Dinâmico com Categorias Inteligentes -->
+        <!-- Formulário Dinâmico -->
         <div class="card-apple rounded-2xl p-5 border">
           <div class="flex justify-between items-center mb-3">
             <h3 id="form-title" class="text-sm font-bold">Novo Lançamento</h3>
@@ -477,7 +479,7 @@
               <span class="text-lg">📅</span>
               <div>
                 <h3 class="text-sm font-bold">Calendário Anual de Lançamentos</h3>
-                <p class="text-[11px] opacity-60">🔴 Despesa • 🟢 Entrada (Clique no dia para ver detalhes)</p>
+                <p class="text-[11px] opacity-60">🔴 Despesa • 🟢 Entrada (Clique no dia para detalhes)</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -495,6 +497,44 @@
       </section>
 
     </main>
+
+    <!-- 2. NOVO: TAB BAR NATIVA INFERIOR PARA IPHONE / CELULAR (Apenas visível no mobile: md:hidden) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-card)]/90 backdrop-blur-lg border-t border-[var(--border-color)] flex items-center justify-around py-2 mobile-tab-bar shadow-2xl">
+      
+      <!-- Botão Saúde -->
+      <button onclick="switchTab('health')" id="mobile-nav-health" class="mobile-nav-item active flex flex-col items-center justify-center p-1.5 transition">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span class="text-[10px] font-bold mt-0.5">Saúde</span>
+      </button>
+
+      <!-- Botão Estudos -->
+      <button onclick="switchTab('studies')" id="mobile-nav-studies" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
+        <span class="text-lg leading-none">📚</span>
+        <span class="text-[10px] font-bold mt-0.5">Estudos</span>
+      </button>
+
+      <!-- Botão Finanças -->
+      <button onclick="switchTab('finance')" id="mobile-nav-finance" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
+        <span class="text-lg leading-none">💰</span>
+        <span class="text-[10px] font-bold mt-0.5">Finanças</span>
+      </button>
+
+      <!-- Botão Modo Claro/Escuro -->
+      <button onclick="toggleTheme()" class="opacity-60 flex flex-col items-center justify-center p-1.5 transition">
+        <span id="mobile-theme-icon" class="text-lg leading-none">☀️</span>
+        <span class="text-[10px] font-bold mt-0.5">Tema</span>
+      </button>
+
+      <!-- Botão Bloquear -->
+      <button onclick="lockApp()" class="opacity-60 flex flex-col items-center justify-center p-1.5 transition">
+        <span class="text-lg leading-none">🔒</span>
+        <span class="text-[10px] font-bold mt-0.5">Bloquear</span>
+      </button>
+
+    </nav>
+
   </div>
 
   <!-- ================= MODAL / POPUP: DETALHE DO DIA ================= -->
@@ -615,19 +655,22 @@
     function applyTheme(theme) {
       const btnIcon = document.getElementById('theme-icon');
       const btnText = document.getElementById('theme-text');
+      const mobileIcon = document.getElementById('mobile-theme-icon');
 
       if (theme === 'light') {
         document.body.classList.add('light-theme');
         if (btnIcon) btnIcon.innerText = "🌙";
         if (btnText) btnText.innerText = "Modo Escuro";
+        if (mobileIcon) mobileIcon.innerText = "🌙";
       } else {
         document.body.classList.remove('light-theme');
         if (btnIcon) btnIcon.innerText = "☀️";
         if (btnText) btnText.innerText = "Modo Claro";
+        if (mobileIcon) mobileIcon.innerText = "☀️";
       }
     }
 
-    // ================= CONTROLE DA SIDEBAR =================
+    // ================= CONTROLE DA SIDEBAR (DESKTOP) =================
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('collapsed');
@@ -636,11 +679,12 @@
 
     function initSidebarState() {
       if (localStorage.getItem('hub_sidebar_collapsed') === 'true') {
-        document.getElementById('sidebar').classList.add('collapsed');
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.add('collapsed');
       }
     }
 
-    // ================= BLOQUEIO / PIN (COM OPÇÃO LEMBRAR 30 DIAS) =================
+    // ================= BLOQUEIO / PIN =================
     const CORRECT_PIN = "2026";
     let currentInputPin = "";
 
@@ -708,6 +752,7 @@
       updateCategoryOptions();
       populateFilterCategoryOptions();
       loadHealthData();
+      initHealthRealtime();
     }
 
     function lockApp() {
@@ -720,39 +765,75 @@
       document.getElementById('lockscreen').classList.remove('hidden');
     }
 
-    // ================= NAVEGAÇÃO LATERAL =================
+    // ================= NAVEGAÇÃO DE ABAS (DESKTOP + MOBILE) =================
     function switchTab(tabId) {
       const tabs = ['health', 'studies', 'finance'];
       tabs.forEach(t => {
         document.getElementById(`tab-content-${t}`).classList.add('hidden');
-        document.getElementById(`nav-${t}`).classList.remove('active');
+        
+        // Desktop nav item
+        const navEl = document.getElementById(`nav-${t}`);
+        if (navEl) navEl.classList.remove('active');
+
+        // Mobile nav item
+        const mobEl = document.getElementById(`mobile-nav-${t}`);
+        if (mobEl) {
+          mobEl.classList.remove('active');
+          mobEl.classList.add('opacity-60');
+        }
       });
 
       document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
-      document.getElementById(`nav-${tabId}`).classList.add('active');
+      
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) activeNav.classList.add('active');
+
+      const activeMob = document.getElementById(`mobile-nav-${tabId}`);
+      if (activeMob) {
+        activeMob.classList.add('active');
+        activeMob.classList.remove('opacity-60');
+      }
 
       if (tabId === 'finance') {
         loadFinanceData();
       }
     }
 
-    // ================= DADOS DE SAÚDE (ANÉIS APPLE WATCH) =================
+    // ================= DADOS DE SAÚDE (COM CORREÇÃO DO SYNC E REALTIME) =================
     let rawHealthData = [];
     let currentChart = null;
     let selectedMetric = 'steps';
+    let healthRealtimeSub = null;
 
     async function loadHealthData() {
+      const syncEl = document.getElementById('last-sync');
+      if (syncEl) syncEl.classList.add('opacity-50');
+
       try {
+        // CORREÇÃO CRÍTICA: Busca os 14 registros mais recentes (ordem decrescente)
         const { data, error } = await supabaseClient
           .from('health_metrics')
           .select('*')
-          .order('date', { ascending: true })
+          .order('date', { ascending: false })
           .limit(14);
 
-        if (error || !data || data.length === 0) return;
-        rawHealthData = data;
+        if (error) {
+          console.error("Erro ao buscar saúde:", error);
+          if (syncEl) syncEl.innerText = "Erro no sync";
+          return;
+        }
 
-        const latest = data[data.length - 1];
+        if (!data || data.length === 0) {
+          if (syncEl) syncEl.innerText = "Nenhum dado recebido";
+          return;
+        }
+
+        // O mais recente é o primeiro da lista decrescente
+        const latest = data[0];
+
+        // Inverte para o gráfico desenhar do mais antigo para o mais novo
+        rawHealthData = [...data].reverse();
+
         const stepsVal = Number(latest.steps || 0);
         const caloriesVal = Number(latest.calories || 0);
         const sleepVal = Number(latest.sleep_hours || 0);
@@ -761,16 +842,14 @@
         document.getElementById('today-calories').innerHTML = `${caloriesVal.toFixed(0)} <span class="text-sm font-normal opacity-60">kcal</span>`;
         document.getElementById('today-sleep').innerHTML = `${sleepVal.toFixed(1)} <span class="text-sm font-normal opacity-60">h</span>`;
 
-        // Cálculo dos Anéis de Atividade Apple Watch
+        // Anéis Apple Watch
         const stepPct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
-        const calPct = Math.min(Math.round((caloriesVal / 600) * 100), 100); // Meta padrão 600 kcal
+        const calPct = Math.min(Math.round((caloriesVal / 600) * 100), 100);
 
-        // Anel Passos: raio 28 -> circunferência = 175.9
         const stepOffset = 175.9 - (175.9 * (stepPct / 100));
         document.getElementById('ring-step-progress').style.strokeDashoffset = stepOffset;
         document.getElementById('ring-step-text').innerText = `${stepPct}%`;
 
-        // Anel Calorias: raio 40 -> circunferência = 251.2
         const calOffset = 251.2 - (251.2 * (calPct / 100));
         document.getElementById('ring-cal-progress').style.strokeDashoffset = calOffset;
         document.getElementById('ring-cal-text').innerText = `${calPct}%`;
@@ -778,15 +857,45 @@
         document.getElementById('steps-bar').style.width = `${stepPct}%`;
         document.getElementById('steps-meta').innerText = `${stepPct}% da meta de 10.000 passos`;
 
-        if (latest.updated_at) {
-          const d = new Date(latest.updated_at);
-          document.getElementById('last-sync').innerText = `Sync: ${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        // Formatação Atualizada do Horário do SYNC
+        const timestamp = latest.updated_at || latest.created_at;
+        if (timestamp) {
+          const d = new Date(timestamp);
+          const hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          const dia = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+          syncEl.innerText = `Sync: ${dia} às ${hora}`;
+        } else if (latest.date) {
+          syncEl.innerText = `Data: ${latest.date}`;
         }
 
         renderCurrentChart();
       } catch (err) {
         console.error("Erro Saúde:", err);
+      } finally {
+        if (syncEl) syncEl.classList.remove('opacity-50');
       }
+    }
+
+    function initHealthRealtime() {
+      if (!healthRealtimeSub) {
+        healthRealtimeSub = supabaseClient
+          .channel('health-sync-realtime')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'health_metrics' }, () => {
+            console.log("⚡ Novo dado do Apple Watch detectado em tempo real!");
+            loadHealthData();
+          })
+          .subscribe();
+      }
+
+      // Ao reabrir/desbloquear o iPhone
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          loadHealthData();
+        }
+      });
+
+      // Atualização periódica a cada 60s
+      setInterval(loadHealthData, 60000);
     }
 
     function setChartMetric(metric) {
@@ -868,11 +977,11 @@
       });
     }
 
-    // ================= FINANÇAS & GRÁFICO DONUT =================
+    // ================= FINANÇAS & DONUT =================
     let currentFinanceRecords = [];
     let currentCalendarYear = new Date().getFullYear();
     let selectedModalDate = "";
-    let currentFinancePeriod = 'month'; // 'month' | 'year' | 'all'
+    let currentFinancePeriod = 'month';
     let donutChartInstance = null;
 
     function setFinancePeriod(period) {
@@ -896,14 +1005,14 @@
       const viewCal = document.getElementById('finance-view-calendar');
 
       if (view === 'calendar') {
-        btnCal.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition";
-        btnList.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition";
+        btnCal.className = "flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition";
+        btnList.className = "flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition";
         viewList.classList.add('hidden');
         viewCal.classList.remove('hidden');
         renderAnnualCalendar();
       } else {
-        btnList.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition";
-        btnCal.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition";
+        btnList.className = "flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition";
+        btnCal.className = "flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition";
         viewCal.classList.add('hidden');
         viewList.classList.remove('hidden');
       }
@@ -986,7 +1095,6 @@
         }
       });
 
-      // Legenda HTML personalizada
       const legendEl = document.getElementById('donut-legend');
       legendEl.innerHTML = "";
       const totalExpense = dataValues.reduce((a, b) => a + b, 0);
@@ -1025,9 +1133,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
+          plugins: { legend: { display: false } },
           cutout: '72%'
         }
       });
@@ -1097,7 +1203,6 @@
       balEl.className = `text-2xl sm:text-3xl font-black mt-1 ${bal >= 0 ? '' : 'text-rose-500'}`;
     }
 
-    // Exportar CSV
     function exportToCSV() {
       if (!currentFinanceRecords || currentFinanceRecords.length === 0) {
         alert("Nenhum dado para exportar.");
@@ -1371,7 +1476,6 @@
       loadFinanceData();
     }
 
-    // Inicialização
     checkSavedSession();
   </script>
 </body>

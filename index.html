@@ -2,11 +2,21 @@
 <html lang="pt-BR" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Personal Hub • OS</title>
+
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Personal Hub">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+
+  <!-- Scripts Externos -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     /* VARIÁVEIS DE TEMA APPLE (DARK MODE PADRÃO) */
     :root {
@@ -44,6 +54,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.3s ease, color 0.3s ease;
+      touch-action: manipulation;
     }
 
     aside {
@@ -100,20 +111,26 @@
     #sidebar.collapsed #toggle-icon {
       transform: rotate(180deg);
     }
+
+    /* Anéis de Atividade Animados */
+    .ring-circle {
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
   </style>
 </head>
 <body class="h-full overflow-hidden">
 
   <!-- ================= TELA DE BLOQUEIO (PIN) ================= -->
   <div id="lockscreen" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-6">
-    <div class="w-full max-w-xs text-center space-y-6">
+    <div class="w-full max-w-xs text-center space-y-5">
       <div>
         <div class="text-4xl mb-2">🔒</div>
         <h2 class="text-xl font-bold text-white tracking-tight">Personal Hub</h2>
         <p class="text-xs text-neutral-400 mt-1">Digite seu PIN de 4 dígitos</p>
       </div>
 
-      <div class="flex justify-center gap-4 py-2">
+      <!-- Bolinhas Indicadoras -->
+      <div class="flex justify-center gap-4 py-1">
         <div id="dot-0" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
         <div id="dot-1" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
         <div id="dot-2" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
@@ -121,7 +138,8 @@
       </div>
       <p id="pin-error" class="text-xs text-rose-500 font-medium h-4"></p>
 
-      <div class="grid grid-cols-3 gap-3.5 pt-2">
+      <!-- Teclado Numérico -->
+      <div class="grid grid-cols-3 gap-3 pt-1">
         <button onclick="pressPin('1')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white">1</button>
         <button onclick="pressPin('2')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white">2</button>
         <button onclick="pressPin('3')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white">3</button>
@@ -134,6 +152,12 @@
         <div></div>
         <button onclick="pressPin('0')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white">0</button>
         <button onclick="deletePin()" class="h-16 rounded-full flex items-center justify-center text-sm font-semibold text-neutral-400 active:text-white">Apagar</button>
+      </div>
+
+      <!-- Opção de Lembrar PIN -->
+      <div class="flex items-center justify-center gap-2 pt-2">
+        <input type="checkbox" id="remember-pin" class="rounded bg-neutral-900 border-neutral-700 text-emerald-500 focus:ring-0">
+        <label for="remember-pin" class="text-xs text-neutral-400 select-none cursor-pointer">Lembrar neste aparelho (30 dias)</label>
       </div>
       <p class="text-[11px] text-neutral-600">PIN padrão: 2026</p>
     </div>
@@ -195,7 +219,7 @@
     <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
     <main class="flex-1 h-full flex flex-col overflow-hidden relative">
 
-      <!-- ================= ABA 1: SAÚDE ================= -->
+      <!-- ================= ABA 1: SAÚDE (COM ANÉIS DE ATIVIDADE) ================= -->
       <section id="tab-content-health" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         <header class="flex justify-between items-center border-b border-[var(--border-color)] pb-4">
           <div class="flex items-center gap-3">
@@ -214,6 +238,51 @@
           </div>
         </header>
 
+        <!-- NOVO: Cartão de Anéis de Atividade Apple Watch -->
+        <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+          <div class="flex items-center gap-5">
+            <!-- Anéis Concêntricos em SVG (Calorias + Passos) -->
+            <div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <!-- Anel 1 Fundo (Calorias) -->
+                <circle cx="50" cy="50" r="40" stroke="rgba(244, 63, 94, 0.15)" stroke-width="8" fill="none"/>
+                <!-- Anel 1 Progresso (Calorias) -->
+                <circle id="ring-cal-progress" class="ring-circle" cx="50" cy="50" r="40" stroke="#f43f5e" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                
+                <!-- Anel 2 Fundo (Passos) -->
+                <circle cx="50" cy="50" r="28" stroke="rgba(16, 185, 129, 0.15)" stroke-width="8" fill="none"/>
+                <!-- Anel 2 Progresso (Passos) -->
+                <circle id="ring-step-progress" class="ring-circle" cx="50" cy="50" r="28" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+              </svg>
+              <span class="absolute text-xl"></span>
+            </div>
+
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Atividade Diária</span>
+              <h3 class="text-lg font-black mt-0.5">Metas de Movimento</h3>
+              <p class="text-xs opacity-60 mt-0.5">Acompanhamento dos círculos de saúde</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 w-full sm:w-auto">
+            <div class="p-3 rounded-2xl bg-neutral-500/5 border border-[var(--border-color)]">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                <span class="text-xs font-bold opacity-70">Calorias</span>
+              </div>
+              <div id="ring-cal-text" class="text-base font-black mt-1">0%</div>
+            </div>
+            <div class="p-3 rounded-2xl bg-neutral-500/5 border border-[var(--border-color)]">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-xs font-bold opacity-70">Passos</span>
+              </div>
+              <div id="ring-step-text" class="text-base font-black mt-1">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards de Métricas Diárias -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="card-apple rounded-2xl p-5 flex flex-col justify-between border">
             <div class="flex items-center justify-between opacity-70 mb-2">
@@ -248,6 +317,7 @@
           </div>
         </div>
 
+        <!-- Gráfico com Seletor -->
         <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4 border">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[var(--border-color)] pb-4">
             <div>
@@ -282,7 +352,7 @@
       <!-- ================= ABA 3: FINANÇAS ================= -->
       <section id="tab-content-finance" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         
-        <!-- Cabeçalho -->
+        <!-- Cabeçalho de Finanças -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
           <div>
             <h2 class="text-2xl font-black tracking-tight">Controle Financeiro</h2>
@@ -298,10 +368,24 @@
           </div>
         </header>
 
+        <!-- Filtro de Período dos Cards + Exportação CSV -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div class="card-apple border p-1 rounded-xl flex items-center gap-1 text-xs">
+            <span class="opacity-60 px-2 font-medium">Balanço:</span>
+            <button id="btn-period-month" onclick="setFinancePeriod('month')" class="px-2.5 py-1 rounded-lg font-bold bg-emerald-500/10 text-emerald-500 transition">Este Mês</button>
+            <button id="btn-period-year" onclick="setFinancePeriod('year')" class="px-2.5 py-1 rounded-lg opacity-60 hover:opacity-100 transition">Este Ano</button>
+            <button id="btn-period-all" onclick="setFinancePeriod('all')" class="px-2.5 py-1 rounded-lg opacity-60 hover:opacity-100 transition">Tudo</button>
+          </div>
+
+          <button onclick="exportToCSV()" class="card-apple border hover:bg-white/5 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+            <span>📥</span> <span>Exportar Backup (CSV)</span>
+          </button>
+        </div>
+
         <!-- Cards de Resumo -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="card-apple rounded-2xl p-5 border">
-            <span class="text-xs font-bold uppercase tracking-wider opacity-60">Saldo Atual</span>
+            <span class="text-xs font-bold uppercase tracking-wider opacity-60">Saldo do Período</span>
             <div id="fin-balance" class="text-2xl sm:text-3xl font-black mt-1">R$ 0,00</div>
           </div>
           <div class="card-apple rounded-2xl p-5 border">
@@ -311,6 +395,21 @@
           <div class="card-apple rounded-2xl p-5 border">
             <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Saídas</span>
             <div id="fin-expense" class="text-2xl sm:text-3xl font-black text-rose-500 mt-1">R$ 0,00</div>
+          </div>
+        </div>
+
+        <!-- NOVO: Gráfico Donut de Despesas por Categoria -->
+        <div id="category-donut-container" class="card-apple rounded-3xl p-5 sm:p-6 border grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Divisão de Gastos</span>
+            <h3 class="text-lg font-black mt-0.5">Despesas por Categoria</h3>
+            <p class="text-xs opacity-60 mt-0.5">Onde o seu dinheiro está sendo investido no período selecionado</p>
+            <div id="donut-legend" class="mt-4 space-y-1.5 text-xs max-h-40 overflow-y-auto pr-2">
+              <!-- Legenda preenchida via JS -->
+            </div>
+          </div>
+          <div class="relative h-56 w-full flex items-center justify-center">
+            <canvas id="categoryDonutChart"></canvas>
           </div>
         </div>
 
@@ -326,30 +425,24 @@
           <form id="finance-form" onsubmit="handleTransactionSubmit(event)" class="grid grid-cols-1 sm:grid-cols-6 gap-3">
             <input type="hidden" id="editing-tx-id" value="">
             
-            <!-- Descrição -->
             <input type="text" id="tx-desc" placeholder="Descrição (ex: Mercado Semanal)" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500 sm:col-span-2">
             
-            <!-- Valor -->
             <input type="number" step="0.01" id="tx-amount" placeholder="Valor (R$)" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
             
-            <!-- Data -->
             <input type="date" id="tx-date" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
 
-            <!-- Tipo (Despesa / Receita) -->
             <select id="tx-type" onchange="updateCategoryOptions()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
               <option value="expense">🔴 Despesa</option>
               <option value="income">🟢 Receita</option>
             </select>
 
-            <!-- Categoria Dinâmica -->
             <select id="tx-category" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
-              <!-- Preenchido via JavaScript -->
+              <!-- Categorias -->
             </select>
 
-            <!-- Botão Salvar (ocupa linha inteira no mobile ou botão no desktop) -->
             <div class="sm:col-span-6 flex justify-end pt-1">
               <button type="submit" id="submit-btn" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6 py-2.5 text-xs sm:text-sm transition">
                 + Adicionar Lançamento
@@ -358,12 +451,11 @@
           </form>
         </div>
 
-        <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES (COM FILTRO DE CATEGORIA) -->
+        <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES -->
         <div id="finance-view-list" class="card-apple rounded-2xl p-5 space-y-4 border">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <h3 class="text-sm font-bold">Histórico de Transações</h3>
             
-            <!-- Filtro de Categoria -->
             <div class="flex items-center gap-2 w-full sm:w-auto">
               <span class="text-xs opacity-60">Filtrar:</span>
               <select id="filter-category" onchange="renderFilteredFinanceList()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-2.5 py-1.5 text-xs focus:outline-none">
@@ -444,16 +536,16 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ================= CATEGORIAS OFICIAIS =================
+    // ================= CATEGORIAS =================
     const EXPENSE_CATEGORIES = [
-      { id: "Mercado", label: "🛒 Mercado & Alimentação" },
-      { id: "Fixos", label: "🏠 Contas Fixas & Moradia" },
-      { id: "Transporte", label: "🚗 Transporte & Combustível" },
-      { id: "Lazer", label: "🍿 Lazer & Restaurantes" },
-      { id: "Saude", label: "💊 Saúde & Academia" },
-      { id: "Estudos", label: "📚 Estudos & Cursos" },
-      { id: "Compras", label: "🛍️ Compras & Pessoais" },
-      { id: "Outros", label: "📦 Outros Gastos" }
+      { id: "Mercado", label: "🛒 Mercado & Alimentação", color: "#34D399" },
+      { id: "Fixos", label: "🏠 Contas Fixas & Moradia", color: "#60A5FA" },
+      { id: "Transporte", label: "🚗 Transporte & Combustível", color: "#FBBF24" },
+      { id: "Lazer", label: "🍿 Lazer & Restaurantes", color: "#F472B6" },
+      { id: "Saude", label: "💊 Saúde & Academia", color: "#A78BFA" },
+      { id: "Estudos", label: "📚 Estudos & Cursos", color: "#38BDF8" },
+      { id: "Compras", label: "🛍️ Compras & Pessoais", color: "#FB923C" },
+      { id: "Outros", label: "📦 Outros Gastos", color: "#9CA3AF" }
     ];
 
     const INCOME_CATEGORIES = [
@@ -491,12 +583,7 @@
       const currentVal = filterSelect.value;
       filterSelect.innerHTML = `<option value="ALL">Todas as categorias</option>`;
 
-      const allCats = [
-        ...EXPENSE_CATEGORIES.map(c => ({ ...c, grp: 'Despesas' })),
-        ...INCOME_CATEGORIES.map(c => ({ ...c, grp: 'Entradas' }))
-      ];
-
-      // Remove duplicados de ID caso existam
+      const allCats = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
       const seen = new Set();
       allCats.forEach(c => {
         if (!seen.has(c.id)) {
@@ -521,9 +608,8 @@
       const newTheme = isLight ? 'dark' : 'light';
       applyTheme(newTheme);
       localStorage.setItem('hub_theme', newTheme);
-      if (rawHealthData && rawHealthData.length > 0) {
-        renderCurrentChart();
-      }
+      if (rawHealthData && rawHealthData.length > 0) renderCurrentChart();
+      renderCategoryDonutChart();
     }
 
     function applyTheme(theme) {
@@ -554,11 +640,16 @@
       }
     }
 
-    // ================= BLOQUEIO / PIN =================
+    // ================= BLOQUEIO / PIN (COM OPÇÃO LEMBRAR 30 DIAS) =================
     const CORRECT_PIN = "2026";
     let currentInputPin = "";
 
     function checkSavedSession() {
+      const isRemembered = localStorage.getItem("hub_remember_until");
+      if (isRemembered && Number(isRemembered) > Date.now()) {
+        unlockApp();
+        return;
+      }
       if (sessionStorage.getItem("hub_unlocked") === "true") {
         unlockApp();
       }
@@ -596,6 +687,10 @@
     function validatePin() {
       if (currentInputPin === CORRECT_PIN) {
         sessionStorage.setItem("hub_unlocked", "true");
+        if (document.getElementById('remember-pin').checked) {
+          const thirtyDays = Date.now() + 30 * 24 * 60 * 60 * 1000;
+          localStorage.setItem("hub_remember_until", thirtyDays.toString());
+        }
         unlockApp();
       } else {
         document.getElementById('pin-error').innerText = "PIN incorreto. Tente novamente.";
@@ -617,6 +712,7 @@
 
     function lockApp() {
       sessionStorage.removeItem("hub_unlocked");
+      localStorage.removeItem("hub_remember_until");
       currentInputPin = "";
       updateDots();
       document.getElementById('pin-error').innerText = "";
@@ -640,7 +736,7 @@
       }
     }
 
-    // ================= DADOS DE SAÚDE =================
+    // ================= DADOS DE SAÚDE (ANÉIS APPLE WATCH) =================
     let rawHealthData = [];
     let currentChart = null;
     let selectedMetric = 'steps';
@@ -658,13 +754,29 @@
 
         const latest = data[data.length - 1];
         const stepsVal = Number(latest.steps || 0);
-        document.getElementById('today-steps').innerText = stepsVal.toLocaleString('pt-BR');
-        document.getElementById('today-calories').innerHTML = `${Number(latest.calories || 0).toFixed(0)} <span class="text-sm font-normal opacity-60">kcal</span>`;
-        document.getElementById('today-sleep').innerHTML = `${Number(latest.sleep_hours || 0).toFixed(1)} <span class="text-sm font-normal opacity-60">h</span>`;
+        const caloriesVal = Number(latest.calories || 0);
+        const sleepVal = Number(latest.sleep_hours || 0);
 
-        const pct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
-        document.getElementById('steps-bar').style.width = `${pct}%`;
-        document.getElementById('steps-meta').innerText = `${pct}% da meta de 10.000 passos`;
+        document.getElementById('today-steps').innerText = stepsVal.toLocaleString('pt-BR');
+        document.getElementById('today-calories').innerHTML = `${caloriesVal.toFixed(0)} <span class="text-sm font-normal opacity-60">kcal</span>`;
+        document.getElementById('today-sleep').innerHTML = `${sleepVal.toFixed(1)} <span class="text-sm font-normal opacity-60">h</span>`;
+
+        // Cálculo dos Anéis de Atividade Apple Watch
+        const stepPct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
+        const calPct = Math.min(Math.round((caloriesVal / 600) * 100), 100); // Meta padrão 600 kcal
+
+        // Anel Passos: raio 28 -> circunferência = 175.9
+        const stepOffset = 175.9 - (175.9 * (stepPct / 100));
+        document.getElementById('ring-step-progress').style.strokeDashoffset = stepOffset;
+        document.getElementById('ring-step-text').innerText = `${stepPct}%`;
+
+        // Anel Calorias: raio 40 -> circunferência = 251.2
+        const calOffset = 251.2 - (251.2 * (calPct / 100));
+        document.getElementById('ring-cal-progress').style.strokeDashoffset = calOffset;
+        document.getElementById('ring-cal-text').innerText = `${calPct}%`;
+
+        document.getElementById('steps-bar').style.width = `${stepPct}%`;
+        document.getElementById('steps-meta').innerText = `${stepPct}% da meta de 10.000 passos`;
 
         if (latest.updated_at) {
           const d = new Date(latest.updated_at);
@@ -756,10 +868,26 @@
       });
     }
 
-    // ================= FINANÇAS =================
+    // ================= FINANÇAS & GRÁFICO DONUT =================
     let currentFinanceRecords = [];
     let currentCalendarYear = new Date().getFullYear();
     let selectedModalDate = "";
+    let currentFinancePeriod = 'month'; // 'month' | 'year' | 'all'
+    let donutChartInstance = null;
+
+    function setFinancePeriod(period) {
+      currentFinancePeriod = period;
+      const periods = ['month', 'year', 'all'];
+      periods.forEach(p => {
+        const btn = document.getElementById(`btn-period-${p}`);
+        if (p === period) {
+          btn.className = "px-2.5 py-1 rounded-lg font-bold bg-emerald-500/10 text-emerald-500 transition";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg opacity-60 hover:opacity-100 transition";
+        }
+      });
+      recalculateFinanceStats();
+    }
 
     function setFinanceView(view) {
       const btnList = document.getElementById('btn-view-list');
@@ -805,20 +933,104 @@
         if (error) return;
 
         currentFinanceRecords = data || [];
-        let income = 0, expense = 0;
-
-        currentFinanceRecords.forEach(item => {
-          const val = Number(item.amount || 0);
-          if (item.type === 'income') income += val;
-          if (item.type === 'expense') expense += val;
-        });
-
-        updateBalanceDisplay(income, expense);
+        recalculateFinanceStats();
         renderFilteredFinanceList();
         renderAnnualCalendar();
       } catch (err) {
         console.error("Falha finanças:", err);
       }
+    }
+
+    function recalculateFinanceStats() {
+      const now = new Date();
+      const currentYearStr = now.getFullYear().toString();
+      const currentMonthStr = `${currentYearStr}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+      let filtered = currentFinanceRecords;
+      if (currentFinancePeriod === 'month') {
+        filtered = currentFinanceRecords.filter(r => (r.date || '').startsWith(currentMonthStr));
+      } else if (currentFinancePeriod === 'year') {
+        filtered = currentFinanceRecords.filter(r => (r.date || '').startsWith(currentYearStr));
+      }
+
+      let income = 0, expense = 0;
+      filtered.forEach(item => {
+        const val = Number(item.amount || 0);
+        if (item.type === 'income') income += val;
+        if (item.type === 'expense') expense += val;
+      });
+
+      updateBalanceDisplay(income, expense);
+      renderCategoryDonutChart(filtered);
+    }
+
+    function renderCategoryDonutChart(filteredRecords = null) {
+      const records = filteredRecords || currentFinanceRecords;
+      const expenseRecords = records.filter(r => r.type === 'expense');
+
+      const catTotals = {};
+      expenseRecords.forEach(r => {
+        const cat = r.category || 'Outros';
+        catTotals[cat] = (catTotals[cat] || 0) + Number(r.amount || 0);
+      });
+
+      const labels = [];
+      const dataValues = [];
+      const bgColors = [];
+
+      EXPENSE_CATEGORIES.forEach(c => {
+        if (catTotals[c.id] && catTotals[c.id] > 0) {
+          labels.push(c.label);
+          dataValues.push(catTotals[c.id]);
+          bgColors.push(c.color);
+        }
+      });
+
+      // Legenda HTML personalizada
+      const legendEl = document.getElementById('donut-legend');
+      legendEl.innerHTML = "";
+      const totalExpense = dataValues.reduce((a, b) => a + b, 0);
+
+      if (dataValues.length === 0) {
+        legendEl.innerHTML = `<p class="opacity-50 py-2">Nenhuma despesa no período.</p>`;
+      } else {
+        labels.forEach((lbl, idx) => {
+          const pct = Math.round((dataValues[idx] / totalExpense) * 100);
+          legendEl.innerHTML += `
+            <div class="flex items-center justify-between py-1 border-b border-[var(--border-color)]">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${bgColors[idx]}"></span>
+                <span>${lbl}</span>
+              </div>
+              <span class="font-bold opacity-80">${pct}% <span class="text-[10px] opacity-60">(R$ ${dataValues[idx].toFixed(2)})</span></span>
+            </div>
+          `;
+        });
+      }
+
+      const ctx = document.getElementById('categoryDonutChart').getContext('2d');
+      if (donutChartInstance) donutChartInstance.destroy();
+
+      donutChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: dataValues.length > 0 ? dataValues : [1],
+            backgroundColor: dataValues.length > 0 ? bgColors : ['rgba(255,255,255,0.05)'],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          cutout: '72%'
+        }
+      });
     }
 
     function renderFilteredFinanceList() {
@@ -831,7 +1043,7 @@
       }
 
       if (!records || records.length === 0) {
-        listEl.innerHTML = `<p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento encontrado ${filterCat !== 'ALL' ? 'nesta categoria' : ''}.</p>`;
+        listEl.innerHTML = `<p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento encontrado.</p>`;
         return;
       }
 
@@ -883,6 +1095,26 @@
       const balEl = document.getElementById('fin-balance');
       balEl.innerText = `R$ ${bal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
       balEl.className = `text-2xl sm:text-3xl font-black mt-1 ${bal >= 0 ? '' : 'text-rose-500'}`;
+    }
+
+    // Exportar CSV
+    function exportToCSV() {
+      if (!currentFinanceRecords || currentFinanceRecords.length === 0) {
+        alert("Nenhum dado para exportar.");
+        return;
+      }
+      let csv = "Data,Descricao,Categoria,Tipo,Valor\n";
+      currentFinanceRecords.forEach(r => {
+        csv += `"${r.date}","${r.description}","${r.category || 'Geral'}","${r.type}",${r.amount}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Financas_Backup_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     // ================= RENDERIZADOR DO CALENDÁRIO ANUAL =================
@@ -959,12 +1191,8 @@
 
           if (txInfo) {
             indicatorsHtml = `<div class="flex items-center justify-center gap-0.5 mt-0.5">`;
-            if (txInfo.hasExpense) {
-              indicatorsHtml += `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>`;
-            }
-            if (txInfo.hasIncome) {
-              indicatorsHtml += `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>`;
-            }
+            if (txInfo.hasExpense) indicatorsHtml += `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>`;
+            if (txInfo.hasIncome) indicatorsHtml += `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>`;
             indicatorsHtml += `</div>`;
           }
 
@@ -1064,7 +1292,6 @@
       openDayModal(selectedModalDate);
     }
 
-    // Iniciar edição
     function startEditing(id) {
       const item = currentFinanceRecords.find(r => r.id === id);
       if (!item) return;
@@ -1144,6 +1371,7 @@
       loadFinanceData();
     }
 
+    // Inicialização
     checkSavedSession();
   </script>
 </body>

@@ -78,10 +78,13 @@
       transform: scale(1.1);
     }
 
-    body:not(.light-theme) #studies-frame {
+    /* Inversão Visual Inteligente nos dois Apps Scripts no Modo Escuro */
+    body:not(.light-theme) #studies-frame,
+    body:not(.light-theme) #graduation-frame {
       filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95);
     }
-    body.light-theme #studies-frame {
+    body.light-theme #studies-frame,
+    body.light-theme #graduation-frame {
       filter: none;
     }
 
@@ -194,6 +197,12 @@
           <button id="nav-studies" onclick="switchTab('studies')" title="Estudos" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
             <span class="text-sm shrink-0">📚</span>
             <span class="sidebar-text whitespace-nowrap">Estudos</span>
+          </button>
+
+          <!-- NOVA ABA: FORMATURA -->
+          <button id="nav-graduation" onclick="switchTab('graduation')" title="Formatura" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
+            <span class="text-sm shrink-0">🎓</span>
+            <span class="sidebar-text whitespace-nowrap">Formatura</span>
           </button>
 
           <button id="nav-finance" onclick="switchTab('finance')" title="Finanças" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
@@ -345,7 +354,17 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 3: FINANÇAS ================= -->
+      <!-- ================= ABA 3: FORMATURA (NOVA) ================= -->
+      <section id="tab-content-graduation" class="hidden w-full h-full p-0 m-0 bg-white">
+        <iframe 
+          id="graduation-frame"
+          src="https://script.google.com/macros/s/AKfycbwqMSM_IcTcaabEFd8vW5kZIvfvisQxBQrZJwT1t3z7Phw5QhHP8RlJg9XnUYbseI4o/exec" 
+          class="w-full h-full border-0 block transition-all duration-300"
+          allow="fullscreen; camera; microphone">
+        </iframe>
+      </section>
+
+      <!-- ================= ABA 4: FINANÇAS ================= -->
       <section id="tab-content-finance" class="hidden h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
@@ -479,7 +498,7 @@
 
     </main>
 
-    <!-- TAB BAR INFERIOR MOBILE -->
+    <!-- TAB BAR INFERIOR MOBILE (COM OS 4 ITENS PRINCIPAIS) -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-card)]/90 backdrop-blur-lg border-t border-[var(--border-color)] flex items-center justify-around py-2 mobile-tab-bar shadow-2xl">
       <button onclick="switchTab('health')" id="mobile-nav-health" class="mobile-nav-item active flex flex-col items-center justify-center p-1.5 transition">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
@@ -491,6 +510,11 @@
       <button onclick="switchTab('studies')" id="mobile-nav-studies" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
         <span class="text-lg leading-none">📚</span>
         <span class="text-[10px] font-bold mt-0.5">Estudos</span>
+      </button>
+
+      <button onclick="switchTab('graduation')" id="mobile-nav-graduation" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
+        <span class="text-lg leading-none">🎓</span>
+        <span class="text-[10px] font-bold mt-0.5">Formatura</span>
       </button>
 
       <button onclick="switchTab('finance')" id="mobile-nav-finance" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
@@ -759,7 +783,6 @@
       if (lockEl) lockEl.classList.remove('hidden');
     }
 
-    // Suporte ao teclado físico para digitação do PIN
     window.addEventListener('keydown', (e) => {
       const lockscreen = document.getElementById('lockscreen');
       if (lockscreen && !lockscreen.classList.contains('hidden')) {
@@ -773,7 +796,7 @@
 
     // ================= NAVEGAÇÃO DE ABAS =================
     function switchTab(tabId) {
-      const tabs = ['health', 'studies', 'finance'];
+      const tabs = ['health', 'studies', 'graduation', 'finance'];
       tabs.forEach(t => {
         const content = document.getElementById(`tab-content-${t}`);
         if (content) content.classList.add('hidden');
@@ -805,7 +828,7 @@
       }
     }
 
-    // ================= DADOS DE SAÚDE (COM CONVERSÃO DE SONO AUTOMÁTICA) =================
+    // ================= DADOS DE SAÚDE =================
     let rawHealthData = [];
     let currentChart = null;
     let selectedMetric = 'steps';
@@ -839,7 +862,6 @@
         const stepsVal = Number(latest.steps || 0);
         const caloriesVal = Number(latest.calories || 0);
         
-        // Conversão automática e blindada de sono (segundos/minutos -> horas)
         let sleepVal = Number(latest.sleep_hours || 0);
         if (sleepVal > 300) {
           sleepVal = sleepVal / 3600;
@@ -951,7 +973,6 @@
         barColor = "rgba(251, 146, 60, 0.85)";
         unit = "kcal/dia";
       } else if (selectedMetric === 'sleep') {
-        // Conversão automática no gráfico também
         values = rawHealthData.map(i => {
           let s = Number(i.sleep_hours || 0);
           if (s > 300) s = s / 3600;
@@ -1529,7 +1550,6 @@
       loadFinanceData();
     }
 
-    // Inicialização da sessão
     checkSavedSession();
   </script>
 </body>

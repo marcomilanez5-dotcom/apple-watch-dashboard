@@ -12,6 +12,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#000000">
 
+  <!-- Ícones Oficiais Apple Touch e Favicon em SVG Nativo -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23121214'/><circle cx='50' cy='50' r='32' fill='none' stroke='%2334D399' stroke-width='8'/><path d='M50 36 C44 26 30 30 30 44 C30 58 50 70 50 70 C50 70 70 58 70 44 C70 30 56 26 50 36 Z' fill='%23F43F5E'/></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23000000'/><circle cx='90' cy='90' r='60' fill='none' stroke='%2334D399' stroke-width='14'/><path d='M90 62 C78 45 52 52 52 76 C52 100 90 122 90 122 C90 122 128 100 128 76 C128 52 102 45 90 62 Z' fill='%23F43F5E'/></svg>">
+
   <!-- Scripts Externos -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -78,7 +82,6 @@
       transform: scale(1.1);
     }
 
-    /* Scrollbar minimalista estilo Apple colada no canto da tela */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -240,10 +243,10 @@
 
     </aside>
 
-    <!-- ÁREA DE CONTEÚDO PRINCIPAL (OCUPA TELA TODA) -->
+    <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
     <main class="flex-1 h-full flex flex-col overflow-hidden relative pb-16 md:pb-0">
 
-      <!-- ================= ABA 1: SAÚDE (ROLAGEM TOTAL NA BORDA DA TELA) ================= -->
+      <!-- ================= ABA 1: SAÚDE ================= -->
       <section id="tab-content-health" class="w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
@@ -382,7 +385,7 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 4: FINANÇAS (ROLAGEM TOTAL NA BORDA DA TELA) ================= -->
+      <!-- ================= ABA 4: FINANÇAS (COM META MENSAL E BUSCA) ================= -->
       <section id="tab-content-finance" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
@@ -401,6 +404,7 @@
             </div>
           </header>
 
+          <!-- Barra de Controles: Filtro de Período + Exportação CSV -->
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div class="card-apple border p-1 rounded-xl flex items-center gap-1 text-xs">
               <span class="opacity-60 px-2 font-medium">Balanço:</span>
@@ -414,6 +418,30 @@
             </button>
           </div>
 
+          <!-- NOVO: CARD DE ORÇAMENTO / META MENSAL DE GASTOS -->
+          <div class="card-apple rounded-2xl p-5 border shadow-lg space-y-3">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Teto Mensal de Gastos</span>
+                <h4 id="budget-summary-text" class="text-sm font-bold mt-0.5">R$ 0,00 de R$ 3.000,00 gastos</h4>
+              </div>
+              <button onclick="changeMonthlyBudget()" class="text-xs card-apple border px-2.5 py-1.5 rounded-lg opacity-75 hover:opacity-100 transition flex items-center gap-1">
+                <span>⚙️</span> <span>Ajustar Meta</span>
+              </button>
+            </div>
+            
+            <!-- Barra de Progresso do Orçamento -->
+            <div class="w-full bg-neutral-500/20 rounded-full h-2.5 overflow-hidden">
+              <div id="budget-progress-bar" class="h-2.5 rounded-full transition-all duration-700 bg-emerald-500" style="width: 0%"></div>
+            </div>
+
+            <div class="flex justify-between items-center text-[11px] opacity-70">
+              <span id="budget-status-label">Uso do teto mensal</span>
+              <span id="budget-percent-label" class="font-bold">0%</span>
+            </div>
+          </div>
+
+          <!-- Cards de Resumo -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="card-apple rounded-2xl p-5 border">
               <span class="text-xs font-bold uppercase tracking-wider opacity-60">Saldo do Período</span>
@@ -429,6 +457,7 @@
             </div>
           </div>
 
+          <!-- Gráfico Donut de Despesas por Categoria -->
           <div id="category-donut-container" class="card-apple rounded-3xl p-5 sm:p-6 border grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Divisão de Gastos</span>
@@ -441,6 +470,7 @@
             </div>
           </div>
 
+          <!-- Formulário Dinâmico -->
           <div class="card-apple rounded-2xl p-5 border">
             <div class="flex justify-between items-center mb-3">
               <h3 id="form-title" class="text-sm font-bold">Novo Lançamento</h3>
@@ -476,14 +506,18 @@
             </form>
           </div>
 
+          <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES (COM BUSCA INSTANTÂNEA) -->
           <div id="finance-view-list" class="card-apple rounded-2xl p-5 space-y-4 border">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <h3 class="text-sm font-bold">Histórico de Transações</h3>
               
-              <div class="flex items-center gap-2 w-full sm:w-auto">
-                <span class="text-xs opacity-60">Filtrar:</span>
+              <!-- Busca Instantânea + Filtro de Categoria -->
+              <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                <input type="text" id="search-tx" oninput="renderFilteredFinanceList()" placeholder="🔍 Buscar lançamento..." 
+                       class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-neutral-500 w-full sm:w-44">
+                
                 <select id="filter-category" onchange="renderFilteredFinanceList()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-2.5 py-1.5 text-xs focus:outline-none">
-                  <option value="ALL">Todas as categorias</option>
+                  <option value="ALL">Todas categorias</option>
                 </select>
                 <button onclick="loadFinanceData()" title="Recarregar" class="text-xs opacity-60 hover:opacity-100 p-1.5 card-apple border rounded-lg">🔄</button>
               </div>
@@ -494,6 +528,7 @@
             </div>
           </div>
 
+          <!-- SUB-VISÃO 2: CALENDÁRIO ANUAL -->
           <div id="finance-view-calendar" class="hidden space-y-4">
             <div class="card-apple rounded-2xl p-4 border flex items-center justify-between">
               <div class="flex items-center gap-3">
@@ -592,6 +627,17 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // ================= VIBRAÇÃO HÁPTICA NATIVA =================
+    function triggerHaptic(type = 'light') {
+      if (!('vibrate' in navigator)) return;
+      try {
+        if (type === 'light') navigator.vibrate(10);
+        else if (type === 'medium') navigator.vibrate(25);
+        else if (type === 'success') navigator.vibrate([15, 35, 20]);
+        else if (type === 'error') navigator.vibrate([40, 50, 40]);
+      } catch (e) {}
+    }
+
     // ================= CATEGORIAS =================
     const EXPENSE_CATEGORIES = [
       { id: "Mercado", label: "🛒 Mercado & Alimentação", color: "#34D399" },
@@ -640,7 +686,7 @@
       const filterSelect = document.getElementById('filter-category');
       if (!filterSelect) return;
       const currentVal = filterSelect.value;
-      filterSelect.innerHTML = `<option value="ALL">Todas as categorias</option>`;
+      filterSelect.innerHTML = `<option value="ALL">Todas categorias</option>`;
 
       const allCats = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
       const seen = new Set();
@@ -663,6 +709,7 @@
     }
 
     function toggleTheme() {
+      triggerHaptic('medium');
       const isLight = document.body.classList.contains('light-theme');
       const newTheme = isLight ? 'dark' : 'light';
       applyTheme(newTheme);
@@ -691,6 +738,7 @@
 
     // ================= CONTROLE DA SIDEBAR =================
     function toggleSidebar() {
+      triggerHaptic('light');
       const sidebar = document.getElementById('sidebar');
       if (!sidebar) return;
       sidebar.classList.toggle('collapsed');
@@ -724,6 +772,7 @@
     }
 
     function pressPin(num) {
+      triggerHaptic('light');
       if (currentInputPin.length < 4) {
         currentInputPin += num;
         updateDots();
@@ -734,6 +783,7 @@
     }
 
     function deletePin() {
+      triggerHaptic('light');
       if (currentInputPin.length > 0) {
         currentInputPin = currentInputPin.slice(0, -1);
         updateDots();
@@ -756,6 +806,7 @@
 
     function validatePin() {
       if (currentInputPin === CORRECT_PIN) {
+        triggerHaptic('success');
         sessionStorage.setItem("hub_unlocked", "true");
         const rem = document.getElementById('remember-pin');
         if (rem && rem.checked) {
@@ -764,6 +815,7 @@
         }
         unlockApp();
       } else {
+        triggerHaptic('error');
         const errEl = document.getElementById('pin-error');
         if (errEl) errEl.innerText = "PIN incorreto. Tente novamente.";
         currentInputPin = "";
@@ -791,6 +843,7 @@
     }
 
     function lockApp() {
+      triggerHaptic('medium');
       sessionStorage.removeItem("hub_unlocked");
       localStorage.removeItem("hub_remember_until");
       currentInputPin = "";
@@ -816,6 +869,7 @@
 
     // ================= NAVEGAÇÃO DE ABAS =================
     function switchTab(tabId) {
+      triggerHaptic('light');
       const tabs = ['health', 'studies', 'graduation', 'finance'];
       tabs.forEach(t => {
         const content = document.getElementById(`tab-content-${t}`);
@@ -898,7 +952,6 @@
         const todaySleepEl = document.getElementById('today-sleep');
         if (todaySleepEl) todaySleepEl.innerHTML = `${sleepVal.toFixed(1)} <span class="text-sm font-normal opacity-60">h</span>`;
 
-        // Anéis Apple Watch
         const stepPct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
         const calPct = Math.min(Math.round((caloriesVal / 600) * 100), 100);
 
@@ -956,6 +1009,7 @@
     }
 
     function setChartMetric(metric) {
+      triggerHaptic('light');
       selectedMetric = metric;
       const btnSteps = document.getElementById('btn-tab-steps');
       const btnCal = document.getElementById('btn-tab-calories');
@@ -1046,14 +1100,30 @@
       });
     }
 
-    // ================= FINANÇAS & DONUT =================
+    // ================= FINANÇAS & META MENSAL =================
     let currentFinanceRecords = [];
     let currentCalendarYear = new Date().getFullYear();
     let selectedModalDate = "";
     let currentFinancePeriod = 'month';
     let donutChartInstance = null;
+    let monthlyBudget = Number(localStorage.getItem('hub_monthly_budget')) || 3000;
+
+    function changeMonthlyBudget() {
+      triggerHaptic('light');
+      const input = prompt("Digite o valor da sua meta de gastos mensal (R$):", monthlyBudget);
+      if (input !== null) {
+        const val = parseFloat(input.replace(/\./g, '').replace(',', '.'));
+        if (!isNaN(val) && val > 0) {
+          monthlyBudget = val;
+          localStorage.setItem('hub_monthly_budget', monthlyBudget.toString());
+          recalculateFinanceStats();
+          triggerHaptic('success');
+        }
+      }
+    }
 
     function setFinancePeriod(period) {
+      triggerHaptic('light');
       currentFinancePeriod = period;
       const periods = ['month', 'year', 'all'];
       periods.forEach(p => {
@@ -1069,6 +1139,7 @@
     }
 
     function setFinanceView(view) {
+      triggerHaptic('light');
       const btnList = document.getElementById('btn-view-list');
       const btnCal = document.getElementById('btn-view-calendar');
       const viewList = document.getElementById('finance-view-list');
@@ -1089,6 +1160,7 @@
     }
 
     function changeCalendarYear(delta) {
+      triggerHaptic('light');
       currentCalendarYear += delta;
       const yrEl = document.getElementById('calendar-current-year');
       if (yrEl) yrEl.innerText = currentCalendarYear;
@@ -1126,6 +1198,38 @@
       const currentYearStr = now.getFullYear().toString();
       const currentMonthStr = `${currentYearStr}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
+      // 1. Cálculo da Meta de Gastos do Mês Corrente
+      const monthExpenses = currentFinanceRecords
+        .filter(r => r.type === 'expense' && (r.date || '').startsWith(currentMonthStr))
+        .reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+
+      const budgetPct = Math.round((monthExpenses / monthlyBudget) * 100);
+      const budgetSummaryEl = document.getElementById('budget-summary-text');
+      const budgetBarEl = document.getElementById('budget-progress-bar');
+      const budgetPctEl = document.getElementById('budget-percent-label');
+      const budgetStatusEl = document.getElementById('budget-status-label');
+
+      if (budgetSummaryEl && budgetBarEl && budgetPctEl) {
+        budgetSummaryEl.innerText = `R$ ${monthExpenses.toLocaleString('pt-BR', {minimumFractionDigits: 2})} de R$ ${monthlyBudget.toLocaleString('pt-BR', {minimumFractionDigits: 2})} gastos`;
+        budgetPctEl.innerText = `${budgetPct}%`;
+        budgetBarEl.style.width = `${Math.min(budgetPct, 100)}%`;
+
+        if (budgetPct < 70) {
+          budgetBarEl.className = "h-2.5 rounded-full transition-all duration-700 bg-emerald-500";
+          budgetStatusEl.innerText = "Gastos dentro do planejado";
+          budgetStatusEl.className = "text-emerald-500 font-semibold";
+        } else if (budgetPct < 90) {
+          budgetBarEl.className = "h-2.5 rounded-full transition-all duration-700 bg-amber-500";
+          budgetStatusEl.innerText = "Atenção: aproximando do teto";
+          budgetStatusEl.className = "text-amber-500 font-semibold";
+        } else {
+          budgetBarEl.className = "h-2.5 rounded-full transition-all duration-700 bg-rose-500";
+          budgetStatusEl.innerText = budgetPct > 100 ? `⚠️ Estourou o teto em R$ ${(monthExpenses - monthlyBudget).toFixed(2)}` : "Alerta: limite quase atingido";
+          budgetStatusEl.className = "text-rose-500 font-semibold";
+        }
+      }
+
+      // 2. Cálculo dos cards de Saldo pelo período selecionado
       let filtered = currentFinanceRecords;
       if (currentFinancePeriod === 'month') {
         filtered = currentFinanceRecords.filter(r => (r.date || '').startsWith(currentMonthStr));
@@ -1217,12 +1321,22 @@
     function renderFilteredFinanceList() {
       const filterCatEl = document.getElementById('filter-category');
       const filterCat = filterCatEl ? filterCatEl.value : 'ALL';
+      
+      const searchInput = document.getElementById('search-tx');
+      const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
       const listEl = document.getElementById('finance-list');
       if (!listEl) return;
 
       let records = currentFinanceRecords;
       if (filterCat !== 'ALL') {
         records = records.filter(r => (r.category || 'Outros') === filterCat);
+      }
+      if (searchTerm) {
+        records = records.filter(r => 
+          (r.description || '').toLowerCase().includes(searchTerm) ||
+          (r.category || '').toLowerCase().includes(searchTerm)
+        );
       }
 
       if (!records || records.length === 0) {
@@ -1287,6 +1401,7 @@
     }
 
     function exportToCSV() {
+      triggerHaptic('success');
       if (!currentFinanceRecords || currentFinanceRecords.length === 0) {
         alert("Nenhum dado para exportar.");
         return;
@@ -1400,6 +1515,7 @@
 
     // ================= MODAL DE DETALHES DO DIA =================
     function openDayModal(dateStr) {
+      triggerHaptic('light');
       selectedModalDate = dateStr;
       const parts = dateStr.split('-');
       const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
@@ -1464,6 +1580,7 @@
     }
 
     function closeDayModal() {
+      triggerHaptic('light');
       const modalEl = document.getElementById('day-modal');
       if (modalEl) modalEl.classList.add('hidden');
     }
@@ -1486,11 +1603,13 @@
     async function deleteFromModal(id) {
       if (!confirm("Deseja apagar este lançamento?")) return;
       await supabaseClient.from('financas').delete().eq('id', id);
+      triggerHaptic('medium');
       await loadFinanceData();
       openDayModal(selectedModalDate);
     }
 
     function startEditing(id) {
+      triggerHaptic('light');
       const item = currentFinanceRecords.find(r => r.id === id);
       if (!item) return;
 
@@ -1512,6 +1631,7 @@
     }
 
     function cancelEditing() {
+      triggerHaptic('light');
       document.getElementById('editing-tx-id').value = "";
       document.getElementById('tx-desc').value = "";
       document.getElementById('tx-amount').value = "";
@@ -1543,6 +1663,7 @@
           .eq('id', editingId);
 
         if (error) {
+          triggerHaptic('error');
           alert("Erro ao atualizar: " + error.message);
           return;
         }
@@ -1552,11 +1673,13 @@
           .insert([{ description: desc, amount: amount, type: type, date: date, category: category }]);
 
         if (error) {
+          triggerHaptic('error');
           alert("Erro ao adicionar: " + error.message);
           return;
         }
       }
 
+      triggerHaptic('success');
       cancelEditing();
       loadFinanceData();
     }
@@ -1564,6 +1687,7 @@
     async function deleteTransaction(id) {
       if (!confirm("Deseja apagar este lançamento?")) return;
       await supabaseClient.from('financas').delete().eq('id', id);
+      triggerHaptic('medium');
       if (document.getElementById('editing-tx-id').value === id) {
         cancelEditing();
       }

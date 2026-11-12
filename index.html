@@ -279,16 +279,15 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 3: FINANÇAS (COM CALENDÁRIO ANUAL INTEGRADO) ================= -->
+      <!-- ================= ABA 3: FINANÇAS ================= -->
       <section id="tab-content-finance" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
         
-        <!-- Cabeçalho de Finanças com Alternador (Lista / Calendário) -->
+        <!-- Cabeçalho -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
           <div>
             <h2 class="text-2xl font-black tracking-tight">Controle Financeiro</h2>
             <p class="text-xs opacity-60">Supabase Database</p>
           </div>
-          <!-- Seletor em Pílulas: Lista vs Calendário -->
           <div class="card-apple border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
             <button id="btn-view-list" onclick="setFinanceView('list')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition">
               📋 Lista de Transações
@@ -315,7 +314,7 @@
           </div>
         </div>
 
-        <!-- Formulário Dinâmico (Criar ou Editar Lançamento) -->
+        <!-- Formulário Dinâmico com Categorias Inteligentes -->
         <div class="card-apple rounded-2xl p-5 border">
           <div class="flex justify-between items-center mb-3">
             <h3 id="form-title" class="text-sm font-bold">Novo Lançamento</h3>
@@ -327,40 +326,60 @@
           <form id="finance-form" onsubmit="handleTransactionSubmit(event)" class="grid grid-cols-1 sm:grid-cols-6 gap-3">
             <input type="hidden" id="editing-tx-id" value="">
             
-            <input type="text" id="tx-desc" placeholder="Descrição (ex: Restaurante)" required 
+            <!-- Descrição -->
+            <input type="text" id="tx-desc" placeholder="Descrição (ex: Mercado Semanal)" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500 sm:col-span-2">
             
+            <!-- Valor -->
             <input type="number" step="0.01" id="tx-amount" placeholder="Valor (R$)" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
             
+            <!-- Data -->
             <input type="date" id="tx-date" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
 
-            <select id="tx-type" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
+            <!-- Tipo (Despesa / Receita) -->
+            <select id="tx-type" onchange="updateCategoryOptions()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
               <option value="expense">🔴 Despesa</option>
               <option value="income">🟢 Receita</option>
             </select>
 
-            <button type="submit" id="submit-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition">
-              + Adicionar
-            </button>
+            <!-- Categoria Dinâmica -->
+            <select id="tx-category" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
+              <!-- Preenchido via JavaScript -->
+            </select>
+
+            <!-- Botão Salvar (ocupa linha inteira no mobile ou botão no desktop) -->
+            <div class="sm:col-span-6 flex justify-end pt-1">
+              <button type="submit" id="submit-btn" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6 py-2.5 text-xs sm:text-sm transition">
+                + Adicionar Lançamento
+              </button>
+            </div>
           </form>
         </div>
 
-        <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES -->
-        <div id="finance-view-list" class="card-apple rounded-2xl p-5 space-y-3 border">
-          <div class="flex justify-between items-center">
+        <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES (COM FILTRO DE CATEGORIA) -->
+        <div id="finance-view-list" class="card-apple rounded-2xl p-5 space-y-4 border">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <h3 class="text-sm font-bold">Histórico de Transações</h3>
-            <button onclick="loadFinanceData()" class="text-xs opacity-60 hover:opacity-100">Atualizar</button>
+            
+            <!-- Filtro de Categoria -->
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <span class="text-xs opacity-60">Filtrar:</span>
+              <select id="filter-category" onchange="renderFilteredFinanceList()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-2.5 py-1.5 text-xs focus:outline-none">
+                <option value="ALL">Todas as categorias</option>
+              </select>
+              <button onclick="loadFinanceData()" title="Recarregar" class="text-xs opacity-60 hover:opacity-100 p-1.5 card-apple border rounded-lg">🔄</button>
+            </div>
           </div>
+
           <div id="finance-list" class="divide-y divide-[var(--border-color)]">
             <p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento cadastrado.</p>
           </div>
         </div>
 
-        <!-- SUB-VISÃO 2: CALENDÁRIO ANUAL COMPLETO -->
+        <!-- SUB-VISÃO 2: CALENDÁRIO ANUAL -->
         <div id="finance-view-calendar" class="hidden space-y-4">
-          <!-- Barra de Navegação do Ano do Calendário -->
           <div class="card-apple rounded-2xl p-4 border flex items-center justify-between">
             <div class="flex items-center gap-3">
               <span class="text-lg">📅</span>
@@ -376,7 +395,6 @@
             </div>
           </div>
 
-          <!-- Grade dos 12 Meses -->
           <div id="annual-calendar-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <!-- Gerado via JavaScript -->
           </div>
@@ -398,7 +416,6 @@
         <button onclick="closeDayModal()" class="w-8 h-8 rounded-full card-apple border flex items-center justify-center opacity-60 hover:opacity-100 transition">✕</button>
       </div>
 
-      <!-- Balanço do Dia -->
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div class="p-2.5 rounded-xl card-apple border">
           <span class="opacity-60 block text-[10px] uppercase font-semibold">Entradas</span>
@@ -410,12 +427,10 @@
         </div>
       </div>
 
-      <!-- Lista de Itens do Dia -->
       <div id="modal-tx-list" class="max-h-60 overflow-y-auto divide-y divide-[var(--border-color)] pr-1 space-y-1">
         <!-- Renderizado dinamicamente -->
       </div>
 
-      <!-- Botão Rápido para adicionar gasto/receita nesta data -->
       <div class="pt-2 border-t border-[var(--border-color)] flex justify-end">
         <button onclick="addTxForCurrentModalDate()" class="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3.5 py-2 rounded-xl transition">
           + Lançar nesta data
@@ -428,6 +443,72 @@
     const SUPABASE_URL = "https://dhozzuhlwojwajvilaob.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ================= CATEGORIAS OFICIAIS =================
+    const EXPENSE_CATEGORIES = [
+      { id: "Mercado", label: "🛒 Mercado & Alimentação" },
+      { id: "Fixos", label: "🏠 Contas Fixas & Moradia" },
+      { id: "Transporte", label: "🚗 Transporte & Combustível" },
+      { id: "Lazer", label: "🍿 Lazer & Restaurantes" },
+      { id: "Saude", label: "💊 Saúde & Academia" },
+      { id: "Estudos", label: "📚 Estudos & Cursos" },
+      { id: "Compras", label: "🛍️ Compras & Pessoais" },
+      { id: "Outros", label: "📦 Outros Gastos" }
+    ];
+
+    const INCOME_CATEGORIES = [
+      { id: "Salario", label: "💼 Salário & Pró-labore" },
+      { id: "Extra", label: "🤝 Freelance & Renda Extra" },
+      { id: "Investimentos", label: "📈 Rendimentos & Investimentos" },
+      { id: "Outros", label: "🎁 Reembolso & Outros" }
+    ];
+
+    function getCategoryBadge(catId, type) {
+      const allCats = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
+      const match = allCats.find(c => c.id === catId);
+      if (match) return match.label;
+      return catId ? `🏷️ ${catId}` : '🏷️ Geral';
+    }
+
+    function updateCategoryOptions(selectedCat = null) {
+      const type = document.getElementById('tx-type').value;
+      const catSelect = document.getElementById('tx-category');
+      const cats = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+
+      catSelect.innerHTML = "";
+      cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.innerText = c.label;
+        if (selectedCat && selectedCat === c.id) opt.selected = true;
+        catSelect.appendChild(opt);
+      });
+    }
+
+    function populateFilterCategoryOptions() {
+      const filterSelect = document.getElementById('filter-category');
+      if (!filterSelect) return;
+      const currentVal = filterSelect.value;
+      filterSelect.innerHTML = `<option value="ALL">Todas as categorias</option>`;
+
+      const allCats = [
+        ...EXPENSE_CATEGORIES.map(c => ({ ...c, grp: 'Despesas' })),
+        ...INCOME_CATEGORIES.map(c => ({ ...c, grp: 'Entradas' }))
+      ];
+
+      // Remove duplicados de ID caso existam
+      const seen = new Set();
+      allCats.forEach(c => {
+        if (!seen.has(c.id)) {
+          seen.add(c.id);
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.innerText = c.label;
+          if (c.id === currentVal) opt.selected = true;
+          filterSelect.appendChild(opt);
+        }
+      });
+    }
 
     // ================= TEMA (DARK / LIGHT) =================
     function initTheme() {
@@ -529,6 +610,8 @@
       initSidebarState();
       initTheme();
       initDefaultDate();
+      updateCategoryOptions();
+      populateFilterCategoryOptions();
       loadHealthData();
     }
 
@@ -673,7 +756,7 @@
       });
     }
 
-    // ================= FINANÇAS (LISTA + CALENDÁRIO ANUAL) =================
+    // ================= FINANÇAS =================
     let currentFinanceRecords = [];
     let currentCalendarYear = new Date().getFullYear();
     let selectedModalDate = "";
@@ -723,59 +806,74 @@
 
         currentFinanceRecords = data || [];
         let income = 0, expense = 0;
-        const listEl = document.getElementById('finance-list');
 
-        if (!data || data.length === 0) {
-          listEl.innerHTML = `<p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento cadastrado.</p>`;
-          updateBalanceDisplay(0, 0);
-          renderAnnualCalendar();
-          return;
-        }
-
-        listEl.innerHTML = "";
-        data.forEach(item => {
+        currentFinanceRecords.forEach(item => {
           const val = Number(item.amount || 0);
           if (item.type === 'income') income += val;
           if (item.type === 'expense') expense += val;
-
-          let dateDisplay = "Hoje";
-          if (item.date) {
-            const parts = item.date.split('-');
-            if (parts.length === 3) {
-              dateDisplay = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            } else {
-              dateDisplay = item.date;
-            }
-          }
-
-          const isExp = item.type === 'expense';
-          const row = document.createElement('div');
-          row.className = "py-3 flex justify-between items-center text-xs";
-          row.innerHTML = `
-            <div>
-              <p class="font-bold text-sm">${item.description}</p>
-              <p class="text-[11px] opacity-60">📅 ${dateDisplay}</p>
-            </div>
-            <div class="flex items-center gap-2 sm:gap-3">
-              <span class="font-black text-sm ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
-                ${isExp ? '-' : '+'} R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
-              </span>
-              <button onclick="startEditing('${item.id}')" title="Editar lançamento" class="p-1.5 opacity-60 hover:opacity-100 hover:bg-neutral-800/40 rounded-lg transition">
-                ✏️
-              </button>
-              <button onclick="deleteTransaction('${item.id}')" title="Excluir lançamento" class="p-1.5 opacity-40 hover:opacity-100 hover:text-rose-500 transition">
-                ✕
-              </button>
-            </div>
-          `;
-          listEl.appendChild(row);
         });
 
         updateBalanceDisplay(income, expense);
+        renderFilteredFinanceList();
         renderAnnualCalendar();
       } catch (err) {
         console.error("Falha finanças:", err);
       }
+    }
+
+    function renderFilteredFinanceList() {
+      const filterCat = document.getElementById('filter-category').value;
+      const listEl = document.getElementById('finance-list');
+
+      let records = currentFinanceRecords;
+      if (filterCat !== 'ALL') {
+        records = records.filter(r => (r.category || 'Outros') === filterCat);
+      }
+
+      if (!records || records.length === 0) {
+        listEl.innerHTML = `<p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento encontrado ${filterCat !== 'ALL' ? 'nesta categoria' : ''}.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = "";
+      records.forEach(item => {
+        const val = Number(item.amount || 0);
+        let dateDisplay = "Hoje";
+        if (item.date) {
+          const parts = item.date.split('-');
+          if (parts.length === 3) dateDisplay = `${parts[2]}/${parts[1]}/${parts[0]}`;
+          else dateDisplay = item.date;
+        }
+
+        const isExp = item.type === 'expense';
+        const catBadge = getCategoryBadge(item.category, item.type);
+
+        const row = document.createElement('div');
+        row.className = "py-3 flex justify-between items-center text-xs";
+        row.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <p class="font-bold text-sm">${item.description}</p>
+              <span class="text-[10px] opacity-75 card-apple border px-2 py-0.5 rounded-md font-medium">
+                ${catBadge}
+              </span>
+            </div>
+            <p class="text-[11px] opacity-60 mt-0.5">📅 ${dateDisplay}</p>
+          </div>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <span class="font-black text-sm ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
+              ${isExp ? '-' : '+'} R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+            </span>
+            <button onclick="startEditing('${item.id}')" title="Editar" class="p-1.5 opacity-60 hover:opacity-100 hover:bg-neutral-800/40 rounded-lg transition">
+              ✏️
+            </button>
+            <button onclick="deleteTransaction('${item.id}')" title="Excluir" class="p-1.5 opacity-40 hover:opacity-100 hover:text-rose-500 transition">
+              ✕
+            </button>
+          </div>
+        `;
+        listEl.appendChild(row);
+      });
     }
 
     function updateBalanceDisplay(inc, exp) {
@@ -799,7 +897,6 @@
       if (!container) return;
       container.innerHTML = "";
 
-      // Mapa de datas com transações: 'YYYY-MM-DD' => { hasIncome: bool, hasExpense: bool, count: int }
       const txDateMap = {};
       currentFinanceRecords.forEach(r => {
         if (!r.date) return;
@@ -817,7 +914,6 @@
         const monthCard = document.createElement('div');
         monthCard.className = "card-apple rounded-2xl p-3.5 border flex flex-col justify-between";
 
-        // Título do Mês
         const monthHeader = document.createElement('div');
         monthHeader.className = "flex justify-between items-center mb-2.5 px-1";
         monthHeader.innerHTML = `
@@ -826,11 +922,9 @@
         `;
         monthCard.appendChild(monthHeader);
 
-        // Grade dos Dias
         const daysGrid = document.createElement('div');
         daysGrid.className = "grid grid-cols-7 gap-1 text-center text-[10px]";
 
-        // Cabeçalhos dos dias da semana (D S T Q Q S S)
         WEEK_DAYS.forEach(d => {
           const wDay = document.createElement('div');
           wDay.className = "opacity-40 font-bold py-0.5";
@@ -838,18 +932,15 @@
           daysGrid.appendChild(wDay);
         });
 
-        // Primeiro dia do mês e total de dias
         const firstDayOfWeek = new Date(currentCalendarYear, month, 1).getDay();
         const daysInMonth = new Date(currentCalendarYear, month + 1, 0).getDate();
 
-        // Células em branco antes do dia 1
         for (let i = 0; i < firstDayOfWeek; i++) {
           const blank = document.createElement('div');
           blank.className = "h-7";
           daysGrid.appendChild(blank);
         }
 
-        // Dias do mês
         for (let day = 1; day <= daysInMonth; day++) {
           const monthPad = String(month + 1).padStart(2, '0');
           const dayPad = String(day).padStart(2, '0');
@@ -882,7 +973,6 @@
             ${indicatorsHtml}
           `;
 
-          // Evento de clique para abrir o modal do dia
           dayCell.onclick = () => openDayModal(dateStr);
           daysGrid.appendChild(dayCell);
         }
@@ -900,7 +990,6 @@
       
       document.getElementById('modal-date-title').innerText = formattedDate;
 
-      // Filtra lançamentos daquele dia
       const dayTxs = currentFinanceRecords.filter(r => r.date === dateStr);
       let dayIncome = 0;
       let dayExpense = 0;
@@ -917,12 +1006,19 @@
           if (isExp) dayExpense += val;
           else dayIncome += val;
 
+          const catBadge = getCategoryBadge(item.category, item.type);
+
           const row = document.createElement('div');
           row.className = "py-2.5 flex justify-between items-center text-xs";
           row.innerHTML = `
             <div>
-              <p class="font-bold text-sm">${item.description}</p>
-              <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${isExp ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}">
+              <div class="flex items-center gap-1.5">
+                <p class="font-bold text-sm">${item.description}</p>
+                <span class="text-[10px] opacity-75 card-apple border px-1.5 py-0.2 rounded font-medium">
+                  ${catBadge}
+                </span>
+              </div>
+              <span class="text-[10px] uppercase font-bold mt-0.5 inline-block ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
                 ${isExp ? 'Despesa' : 'Entrada'}
               </span>
             </div>
@@ -979,9 +1075,11 @@
       document.getElementById('tx-type').value = item.type;
       document.getElementById('tx-date').value = item.date || new Date().toISOString().split('T')[0];
 
+      updateCategoryOptions(item.category || 'Outros');
+
       document.getElementById('form-title').innerText = "Editar Lançamento";
       document.getElementById('submit-btn').innerText = "Salvar Alterações";
-      document.getElementById('submit-btn').className = "bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition";
+      document.getElementById('submit-btn').className = "w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl px-6 py-2.5 text-xs sm:text-sm transition";
       document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
       document.getElementById('finance-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -993,10 +1091,11 @@
       document.getElementById('tx-amount').value = "";
       initDefaultDate();
       document.getElementById('tx-type').value = "expense";
+      updateCategoryOptions();
 
       document.getElementById('form-title').innerText = "Novo Lançamento";
-      document.getElementById('submit-btn').innerText = "+ Adicionar";
-      document.getElementById('submit-btn').className = "bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition";
+      document.getElementById('submit-btn').innerText = "+ Adicionar Lançamento";
+      document.getElementById('submit-btn').className = "w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-6 py-2.5 text-xs sm:text-sm transition";
       document.getElementById('cancel-edit-btn').classList.add('hidden');
     }
 
@@ -1007,13 +1106,14 @@
       const amount = parseFloat(document.getElementById('tx-amount').value);
       const type = document.getElementById('tx-type').value;
       const date = document.getElementById('tx-date').value;
+      const category = document.getElementById('tx-category').value;
 
       if (!desc || isNaN(amount) || amount <= 0 || !date) return;
 
       if (editingId) {
         const { error } = await supabaseClient
           .from('financas')
-          .update({ description: desc, amount: amount, type: type, date: date })
+          .update({ description: desc, amount: amount, type: type, date: date, category: category })
           .eq('id', editingId);
 
         if (error) {
@@ -1023,7 +1123,7 @@
       } else {
         const { error } = await supabaseClient
           .from('financas')
-          .insert([{ description: desc, amount: amount, type: type, date: date }]);
+          .insert([{ description: desc, amount: amount, type: type, date: date, category: category }]);
 
         if (error) {
           alert("Erro ao adicionar: " + error.message);

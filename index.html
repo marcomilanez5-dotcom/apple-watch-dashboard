@@ -274,6 +274,7 @@
                 <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" stroke="rgba(244, 63, 94, 0.15)" stroke-width="8" fill="none"/>
                   <circle id="ring-cal-progress" class="ring-circle" cx="50" cy="50" r="40" stroke="#f43f5e" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                  
                   <circle cx="50" cy="50" r="28" stroke="rgba(16, 185, 129, 0.15)" stroke-width="8" fill="none"/>
                   <circle id="ring-step-progress" class="ring-circle" cx="50" cy="50" r="28" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
                 </svg>
@@ -380,14 +381,14 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 4: RIFA (DIVISÃO R$ 10 = R$ 4,35 MEU / R$ 2,65 EUPHORIA) ================= -->
+      <!-- ================= ABA 4: RIFA (COM REGULAMENTO DE BONIFICAÇÃO R$ 25 A CADA 50 COTAS) ================= -->
       <section id="tab-content-raffle" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
           <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
             <div>
               <h2 class="text-xl sm:text-2xl font-black tracking-tight">Painel da Rifa 🎓</h2>
-              <p class="text-xs opacity-60">Valores para amortização direta no boleto da formatura (isolado de Finanças)</p>
+              <p class="text-xs opacity-60">Amortização direta no boleto da formatura (com bonificação oficial de R$ 25 a cada 50 cotas)</p>
             </div>
             <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5 transition">
               <span>🔄</span> <span>Atualizar Dados</span>
@@ -417,7 +418,33 @@
             </div>
           </div>
 
-          <!-- Cards de Métricas com a Divisão Real das Cotas -->
+          <!-- NOVO: Card de Destaque da Bonificação Oficial -->
+          <div class="card-apple rounded-3xl p-5 sm:p-6 border bg-gradient-to-br from-emerald-500/10 via-transparent to-amber-500/10 space-y-4 shadow-xl">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Total Abatido no Meu Boleto</span>
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">Cotas + Bônus</span>
+                </div>
+                <div id="raffle-total-final-abate" class="text-3xl sm:text-4xl font-black mt-1 text-emerald-400">R$ 0,00</div>
+                <p id="raffle-abate-formula" class="text-xs opacity-75 mt-0.5">Base (R$ 0,00) + Bonificação (R$ 0,00)</p>
+              </div>
+
+              <!-- Próximo Bônus -->
+              <div class="w-full sm:w-64 p-3.5 rounded-2xl bg-neutral-900/80 border border-[var(--border-color)] space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="opacity-75 font-medium">Próximo Bônus (+R$ 25):</span>
+                  <span id="next-bonus-counter" class="font-bold text-amber-400">0/50</span>
+                </div>
+                <div class="w-full bg-neutral-700/40 rounded-full h-2 overflow-hidden">
+                  <div id="next-bonus-progress" class="bg-amber-400 h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                </div>
+                <p id="next-bonus-tip" class="text-[10px] opacity-60 text-right">Faltam 50 cotas</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards Detalhados dos Indicadores -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             
             <!-- 1. Total Bruto (R$ 10/cota) -->
@@ -427,25 +454,25 @@
               <p class="text-[11px] opacity-60 mt-1">Venda bruta (R$ 10/cota) [1]</p>
             </div>
 
-            <!-- 2. Seu Abate no Boleto (R$ 4,35/cota) -->
-            <div class="card-apple rounded-2xl p-5 border bg-emerald-500/5">
-              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Abate no Meu Boleto</span>
+            <!-- 2. Arrecadação por Número (R$ 4,35/cota) -->
+            <div class="card-apple rounded-2xl p-5 border">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Arrecadação Base</span>
               <div id="raffle-my-share" class="text-2xl font-black mt-1 text-emerald-400">R$ 0,00</div>
-              <p class="text-[11px] text-emerald-500/80 mt-1">R$ 4,35 por cota vendida</p>
+              <p class="text-[11px] opacity-60 mt-1">R$ 4,35 por cota vendida</p>
             </div>
 
-            <!-- 3. Cota Euphoria (R$ 2,65/cota) -->
+            <!-- 3. Bonificação Oficial (R$ 25 a cada 50) -->
+            <div class="card-apple rounded-2xl p-5 border">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Bonificação Conquistada</span>
+              <div id="raffle-bonus-total" class="text-2xl font-black mt-1 text-amber-400">R$ 0,00</div>
+              <p id="raffle-bonus-tiers" class="text-[11px] opacity-60 mt-1">0 metas de 50 batidas</p>
+            </div>
+
+            <!-- 4. Cota Euphoria (R$ 2,65/cota) -->
             <div class="card-apple rounded-2xl p-5 border">
               <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Cota Euphoria</span>
               <div id="raffle-euphoria-share" class="text-2xl font-black mt-1">R$ 0,00</div>
               <p class="text-[11px] opacity-60 mt-1">R$ 2,65 por cota (repasse)</p>
-            </div>
-
-            <!-- 4. Cotas Vendidas & Apoiadores -->
-            <div class="card-apple rounded-2xl p-5 border">
-              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Cotas / Apoiadores</span>
-              <div id="raffle-total-quotas" class="text-2xl font-black mt-1">0 cotas</div>
-              <p id="raffle-total-buyers" class="text-[11px] opacity-60 mt-1">0 compradores registrados [1]</p>
             </div>
 
           </div>
@@ -469,7 +496,7 @@
         </div>
       </section>
 
-      <!-- ================= ABA 5: FINANÇAS (100% ISOLADA DA RIFA) ================= -->
+      <!-- ================= ABA 5: FINANÇAS ================= -->
       <section id="tab-content-finance" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
@@ -706,10 +733,11 @@
     // ================= CONFIGURAÇÃO DA RIFA =================
     const RAFFLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAkfogSU-_KHVycB2sJII0SfYcTQsjibOvhRGGXjUnW4mCYxnx_1rFNHoR0mL58iWa/exec";
     
-    // Divisão Oficial da Rifa [1]:
-    const PRICE_BRUTO = 10.00;     // Preço de venda cobrado [1]
-    const PRICE_MEU_BOLETO = 4.35;  // Abate direto no boleto da formatura [1]
-    const PRICE_EUPHORIA = 2.65;   // Repasse para a Euphoria [1]
+    // Regulamento Oficial da Formatura [1]:
+    const PRICE_BRUTO = 10.00;        // Valor pago pelo comprador [1]
+    const PRICE_MEU_BOLETO = 4.35;     // Arrecadação por cota vendida [1]
+    const PRICE_EUPHORIA = 2.65;      // Cota Euphoria [1]
+    const BONUS_PER_50_COTAS = 25.00; // Bonificação a cada 50 cotas confirmadas
 
     // ================= CATEGORIAS FINANÇAS =================
     const EXPENSE_CATEGORIES = [
@@ -970,7 +998,7 @@
       }
     }
 
-    // ================= DADOS DA RIFA =================
+    // ================= DADOS DA RIFA (COM BONIFICAÇÃO R$ 25 A CADA 50) =================
     let raffleBuyersData = [];
 
     function initRaffleCountdown() {
@@ -1018,16 +1046,37 @@
           let totalCotas = 0;
           raffleBuyersData.forEach(c => totalCotas += Number(c.cotas || 1));
 
-          // Cálculos Exatos da Divisão [1]:
+          // 1. Cálculos de Base
           const totalArrecadadoBruto = totalCotas * PRICE_BRUTO;       // R$ 10,00 [1]
-          const meuAbateBoleto = totalCotas * PRICE_MEU_BOLETO;         // R$ 4,35 [1]
+          const baseMeuBoleto = totalCotas * PRICE_MEU_BOLETO;         // R$ 4,35 [1]
           const repasseEuphoria = totalCotas * PRICE_EUPHORIA;          // R$ 2,65 [1]
 
+          // 2. Cálculo da Bonificação Oficial (R$ 25,00 a cada 50 cotas completas)
+          const lotesDe50 = Math.floor(totalCotas / 50);
+          const totalBonificacao = lotesDe50 * BONUS_PER_50_COTAS;
+
+          // 3. Total Final Abatido no Boleto
+          const totalAbatidoFinal = baseMeuBoleto + totalBonificacao;
+
+          // 4. Progresso para o Próximo Bônus de R$ 25
+          const cotasNoLoteAtual = totalCotas % 50;
+          const faltamParaProximo = 50 - cotasNoLoteAtual;
+          const pctLote = Math.round((cotasNoLoteAtual / 50) * 100);
+
+          // Atualizações Visuais
           document.getElementById('raffle-total-raised').innerText = `R$ ${totalArrecadadoBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-          document.getElementById('raffle-my-share').innerText = `R$ ${meuAbateBoleto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-my-share').innerText = `R$ ${baseMeuBoleto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
           document.getElementById('raffle-euphoria-share').innerText = `R$ ${repasseEuphoria.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-          document.getElementById('raffle-total-quotas').innerText = `${totalCotas} cotas`;
-          document.getElementById('raffle-total-buyers').innerText = `${raffleBuyersData.length} apoiadores [1]`;
+          
+          document.getElementById('raffle-bonus-total').innerText = `+ R$ ${totalBonificacao.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-bonus-tiers').innerText = `${lotesDe50} meta(s) de 50 batida(s)`;
+
+          document.getElementById('raffle-total-final-abate').innerText = `R$ ${totalAbatidoFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-abate-formula').innerText = `Base: R$ ${baseMeuBoleto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} + Bônus: R$ ${totalBonificacao.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+          document.getElementById('next-bonus-counter').innerText = `${cotasNoLoteAtual}/50 cotas`;
+          document.getElementById('next-bonus-progress').style.width = `${pctLote}%`;
+          document.getElementById('next-bonus-tip').innerText = `Faltam ${faltamParaProximo} cota(s) para +R$ 25,00`;
 
           renderRaffleBuyers();
         } else {
@@ -1316,7 +1365,7 @@
       });
     }
 
-    // ================= FINANÇAS (TOTALMENTE INDEPENDENTE) =================
+    // ================= FINANÇAS =================
     let currentFinanceRecords = [];
     let currentCalendarYear = new Date().getFullYear();
     let selectedModalDate = "";

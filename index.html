@@ -385,15 +385,22 @@
       <section id="tab-content-raffle" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
-          <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
-            <div>
-              <h2 class="text-xl sm:text-2xl font-black tracking-tight">Painel da Rifa 🎓</h2>
-              <p class="text-xs opacity-60">Amortização direta no boleto da formatura (com bonificação oficial de R$ 25 a cada 50 cotas)</p>
-            </div>
-            <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5 transition">
-              <span>🔄</span> <span>Atualizar Dados</span>
-            </button>
-          </header>
+         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
+  <div>
+    <h2 class="text-xl sm:text-2xl font-black tracking-tight">Painel da Rifa 🎓</h2>
+    <p class="text-xs opacity-60">Amortização direta no boleto da formatura (com bonificação oficial de R$ 25 a cada 50 cotas)</p>
+  </div>
+  <div class="flex items-center gap-2">
+    <!-- Link Direto para o Arrecadaê -->
+    <a href="https://www.arrecadae.com.br/evento/aea26.2" target="_blank" rel="noopener"
+       class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition">
+      <span>🎟️</span> <span>Comprar no Arrecadaê ↗</span>
+    </a>
+    <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5 transition">
+      <span>🔄</span> <span>Atualizar Dados</span>
+    </button>
+  </div>
+</header>
 
           <!-- Banner Contagem Regressiva para o Sorteio -->
           <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">

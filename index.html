@@ -12,7 +12,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#000000">
 
-  <!-- Ícones Oficiais Apple Touch e Favicon em SVG Nativo -->
+  <!-- Favicon & Apple Touch Icon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%23121214'/><circle cx='50' cy='50' r='32' fill='none' stroke='%2334D399' stroke-width='8'/><path d='M50 36 C44 26 30 30 30 44 C30 58 50 70 50 70 C50 70 70 58 70 44 C70 30 56 26 50 36 Z' fill='%23F43F5E'/></svg>">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%23000000'/><circle cx='90' cy='90' r='60' fill='none' stroke='%2334D399' stroke-width='14'/><path d='M90 62 C78 45 52 52 52 76 C52 100 90 122 90 122 C90 122 128 100 128 76 C128 52 102 45 90 62 Z' fill='%23F43F5E'/></svg>">
 
@@ -181,7 +181,6 @@
         <input type="checkbox" id="remember-pin" class="rounded bg-neutral-900 border-neutral-700 text-emerald-500 focus:ring-0">
         <label for="remember-pin" class="text-xs text-neutral-400 select-none cursor-pointer">Lembrar neste aparelho (30 dias)</label>
       </div>
-      <p class="text-[11px] text-neutral-600">PIN padrão: 2026</p>
     </div>
   </div>
 
@@ -222,6 +221,11 @@
             <span class="sidebar-text whitespace-nowrap">Formatura</span>
           </button>
 
+          <button id="nav-raffle" onclick="switchTab('raffle')" title="Rifa" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
+            <span class="text-sm shrink-0">🎟️</span>
+            <span class="sidebar-text whitespace-nowrap">Rifa</span>
+          </button>
+
           <button id="nav-finance" onclick="switchTab('finance')" title="Finanças" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
             <span class="text-sm shrink-0">💰</span>
             <span class="sidebar-text whitespace-nowrap">Finanças</span>
@@ -249,7 +253,6 @@
       <!-- ================= ABA 1: SAÚDE ================= -->
       <section id="tab-content-health" class="w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
-          
           <header class="flex justify-between items-center border-b border-[var(--border-color)] pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center">
@@ -267,7 +270,6 @@
             </div>
           </header>
 
-          <!-- Anéis de Atividade -->
           <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
             <div class="flex items-center gap-5">
               <div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
@@ -306,7 +308,6 @@
             </div>
           </div>
 
-          <!-- Cards Diários -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="card-apple rounded-2xl p-5 flex flex-col justify-between border">
               <div class="flex items-center justify-between opacity-70 mb-2">
@@ -341,7 +342,6 @@
             </div>
           </div>
 
-          <!-- Gráfico Histórico -->
           <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4 border">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[var(--border-color)] pb-4">
               <div>
@@ -361,7 +361,6 @@
               <canvas id="healthChart"></canvas>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -385,7 +384,82 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 4: FINANÇAS (COM META MENSAL E BUSCA) ================= -->
+      <!-- ================= ABA 4: RIFA (DASHBOARD NATIVO) ================= -->
+      <section id="tab-content-raffle" class="hidden w-full h-full overflow-y-auto">
+        <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
+          
+          <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black tracking-tight">Painel da Rifa 🎓</h2>
+              <p class="text-xs opacity-60">Sincronizado diretamente com a Planilha da Formatura</p>
+            </div>
+            <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5 transition">
+              <span>🔄</span> <span>Atualizar Dados</span>
+            </button>
+          </header>
+
+          <!-- Banner Contagem Regressiva para o Sorteio -->
+          <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Sorteio Oficial [1]</span>
+              <h3 class="text-lg font-black mt-0.5">08 de Dezembro de 2026 às 11:00 [1]</h3>
+              <p class="text-xs opacity-60 mt-0.5">Ao vivo no Instagram <strong class="text-pink-400">@euphoria.formaturas</strong> e YouTube [1]</p>
+            </div>
+            <div id="raffle-countdown" class="flex items-center gap-2 text-center">
+              <div class="p-2.5 rounded-xl bg-neutral-500/10 border border-[var(--border-color)] min-w-[50px]">
+                <span id="cd-days" class="text-lg font-black block">--</span>
+                <span class="text-[9px] uppercase opacity-60">Dias</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-neutral-500/10 border border-[var(--border-color)] min-w-[50px]">
+                <span id="cd-hours" class="text-lg font-black block">--</span>
+                <span class="text-[9px] uppercase opacity-60">Horas</span>
+              </div>
+              <div class="p-2.5 rounded-xl bg-neutral-500/10 border border-[var(--border-color)] min-w-[50px]">
+                <span id="cd-mins" class="text-lg font-black block">--</span>
+                <span class="text-[9px] uppercase opacity-60">Min</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards de Métricas da Rifa -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="card-apple rounded-2xl p-5 border">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Total Arrecadado</span>
+              <div id="raffle-total-raised" class="text-2xl sm:text-3xl font-black mt-1">R$ 0,00</div>
+              <p class="text-[11px] opacity-60 mt-1">Valor acumulado</p>
+            </div>
+            <div class="card-apple rounded-2xl p-5 border">
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Cotas Vendidas</span>
+              <div id="raffle-total-quotas" class="text-2xl sm:text-3xl font-black mt-1">0</div>
+              <p class="text-[11px] opacity-60 mt-1">Total de números emitidos</p>
+            </div>
+            <div class="card-apple rounded-2xl p-5 border">
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Compradores</span>
+              <div id="raffle-total-buyers" class="text-2xl sm:text-3xl font-black mt-1">0</div>
+              <p class="text-[11px] opacity-60 mt-1">Apoiadores registrados [1]</p>
+            </div>
+          </div>
+
+          <!-- Lista de Compradores e Disparador de WhatsApp -->
+          <div class="card-apple rounded-2xl p-5 space-y-4 border">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div>
+                <h3 class="text-sm font-bold">Compradores & Envio de Números</h3>
+                <p class="text-xs opacity-60">Cole os números e clique para enviar no WhatsApp com mensagem pronta [1]</p>
+              </div>
+              <input type="text" id="raffle-search" oninput="renderRaffleBuyers()" placeholder="🔍 Buscar comprador..." 
+                     class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-neutral-500 w-full sm:w-56">
+            </div>
+
+            <div id="raffle-buyers-list" class="divide-y divide-[var(--border-color)]">
+              <p class="text-xs opacity-50 py-4 text-center">Carregando compradores da planilha...</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= ABA 5: FINANÇAS ================= -->
       <section id="tab-content-finance" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
@@ -404,7 +478,6 @@
             </div>
           </header>
 
-          <!-- Barra de Controles: Filtro de Período + Exportação CSV -->
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div class="card-apple border p-1 rounded-xl flex items-center gap-1 text-xs">
               <span class="opacity-60 px-2 font-medium">Balanço:</span>
@@ -418,7 +491,7 @@
             </button>
           </div>
 
-          <!-- NOVO: CARD DE ORÇAMENTO / META MENSAL DE GASTOS -->
+          <!-- Meta Mensal -->
           <div class="card-apple rounded-2xl p-5 border shadow-lg space-y-3">
             <div class="flex justify-between items-center">
               <div>
@@ -430,7 +503,6 @@
               </button>
             </div>
             
-            <!-- Barra de Progresso do Orçamento -->
             <div class="w-full bg-neutral-500/20 rounded-full h-2.5 overflow-hidden">
               <div id="budget-progress-bar" class="h-2.5 rounded-full transition-all duration-700 bg-emerald-500" style="width: 0%"></div>
             </div>
@@ -457,7 +529,7 @@
             </div>
           </div>
 
-          <!-- Gráfico Donut de Despesas por Categoria -->
+          <!-- Donut -->
           <div id="category-donut-container" class="card-apple rounded-3xl p-5 sm:p-6 border grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div>
               <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Divisão de Gastos</span>
@@ -470,7 +542,7 @@
             </div>
           </div>
 
-          <!-- Formulário Dinâmico -->
+          <!-- Formulário -->
           <div class="card-apple rounded-2xl p-5 border">
             <div class="flex justify-between items-center mb-3">
               <h3 id="form-title" class="text-sm font-bold">Novo Lançamento</h3>
@@ -506,12 +578,11 @@
             </form>
           </div>
 
-          <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES (COM BUSCA INSTANTÂNEA) -->
+          <!-- Histórico -->
           <div id="finance-view-list" class="card-apple rounded-2xl p-5 space-y-4 border">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <h3 class="text-sm font-bold">Histórico de Transações</h3>
               
-              <!-- Busca Instantânea + Filtro de Categoria -->
               <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                 <input type="text" id="search-tx" oninput="renderFilteredFinanceList()" placeholder="🔍 Buscar lançamento..." 
                        class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-neutral-500 w-full sm:w-44">
@@ -528,7 +599,7 @@
             </div>
           </div>
 
-          <!-- SUB-VISÃO 2: CALENDÁRIO ANUAL -->
+          <!-- Calendário Anual -->
           <div id="finance-view-calendar" class="hidden space-y-4">
             <div class="card-apple rounded-2xl p-4 border flex items-center justify-between">
               <div class="flex items-center gap-3">
@@ -559,32 +630,27 @@
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
-        <span class="text-[10px] font-bold mt-0.5">Saúde</span>
+        <span class="text-[9px] font-bold mt-0.5">Saúde</span>
       </button>
 
       <button onclick="switchTab('studies')" id="mobile-nav-studies" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-lg leading-none">📚</span>
-        <span class="text-[10px] font-bold mt-0.5">Estudos</span>
+        <span class="text-base leading-none">📚</span>
+        <span class="text-[9px] font-bold mt-0.5">Estudos</span>
       </button>
 
       <button onclick="switchTab('graduation')" id="mobile-nav-graduation" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-lg leading-none">🎓</span>
-        <span class="text-[10px] font-bold mt-0.5">Formatura</span>
+        <span class="text-base leading-none">🎓</span>
+        <span class="text-[9px] font-bold mt-0.5">Formatura</span>
+      </button>
+
+      <button onclick="switchTab('raffle')" id="mobile-nav-raffle" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
+        <span class="text-base leading-none">🎟️</span>
+        <span class="text-[9px] font-bold mt-0.5">Rifa</span>
       </button>
 
       <button onclick="switchTab('finance')" id="mobile-nav-finance" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-lg leading-none">💰</span>
-        <span class="text-[10px] font-bold mt-0.5">Finanças</span>
-      </button>
-
-      <button onclick="toggleTheme()" class="opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span id="mobile-theme-icon" class="text-lg leading-none">☀️</span>
-        <span class="text-[10px] font-bold mt-0.5">Tema</span>
-      </button>
-
-      <button onclick="lockApp()" class="opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-lg leading-none">🔒</span>
-        <span class="text-[10px] font-bold mt-0.5">Bloquear</span>
+        <span class="text-base leading-none">💰</span>
+        <span class="text-[9px] font-bold mt-0.5">Finanças</span>
       </button>
     </nav>
 
@@ -627,16 +693,9 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ================= VIBRAÇÃO HÁPTICA NATIVA =================
-    function triggerHaptic(type = 'light') {
-      if (!('vibrate' in navigator)) return;
-      try {
-        if (type === 'light') navigator.vibrate(10);
-        else if (type === 'medium') navigator.vibrate(25);
-        else if (type === 'success') navigator.vibrate([15, 35, 20]);
-        else if (type === 'error') navigator.vibrate([40, 50, 40]);
-      } catch (e) {}
-    }
+    // URL do Google Apps Script da sua Rifa [1]:
+    const RAFFLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAkfogSU-_KHVycB2sJII0SfYcTQsjibOvhRGGXjUnW4mCYxnx_1rFNHoR0mL58iWa/exec";
+    const RAFFLE_TICKET_PRICE = 5.00;
 
     // ================= CATEGORIAS =================
     const EXPENSE_CATEGORIES = [
@@ -709,7 +768,6 @@
     }
 
     function toggleTheme() {
-      triggerHaptic('medium');
       const isLight = document.body.classList.contains('light-theme');
       const newTheme = isLight ? 'dark' : 'light';
       applyTheme(newTheme);
@@ -738,7 +796,6 @@
 
     // ================= CONTROLE DA SIDEBAR =================
     function toggleSidebar() {
-      triggerHaptic('light');
       const sidebar = document.getElementById('sidebar');
       if (!sidebar) return;
       sidebar.classList.toggle('collapsed');
@@ -752,8 +809,8 @@
       }
     }
 
-    // ================= BLOQUEIO / PIN =================
-    const CORRECT_PIN = "2026";
+    // ================= BLOQUEIO / PIN (1998) =================
+    const CORRECT_PIN = "1998";
     let currentInputPin = "";
 
     function checkSavedSession() {
@@ -772,7 +829,6 @@
     }
 
     function pressPin(num) {
-      triggerHaptic('light');
       if (currentInputPin.length < 4) {
         currentInputPin += num;
         updateDots();
@@ -783,7 +839,6 @@
     }
 
     function deletePin() {
-      triggerHaptic('light');
       if (currentInputPin.length > 0) {
         currentInputPin = currentInputPin.slice(0, -1);
         updateDots();
@@ -806,7 +861,6 @@
 
     function validatePin() {
       if (currentInputPin === CORRECT_PIN) {
-        triggerHaptic('success');
         sessionStorage.setItem("hub_unlocked", "true");
         const rem = document.getElementById('remember-pin');
         if (rem && rem.checked) {
@@ -815,7 +869,6 @@
         }
         unlockApp();
       } else {
-        triggerHaptic('error');
         const errEl = document.getElementById('pin-error');
         if (errEl) errEl.innerText = "PIN incorreto. Tente novamente.";
         currentInputPin = "";
@@ -837,13 +890,13 @@
         populateFilterCategoryOptions();
         loadHealthData();
         initHealthRealtime();
+        initRaffleCountdown();
       } catch (err) {
         console.error("Erro no unlock:", err);
       }
     }
 
     function lockApp() {
-      triggerHaptic('medium');
       sessionStorage.removeItem("hub_unlocked");
       localStorage.removeItem("hub_remember_until");
       currentInputPin = "";
@@ -869,8 +922,7 @@
 
     // ================= NAVEGAÇÃO DE ABAS =================
     function switchTab(tabId) {
-      triggerHaptic('light');
-      const tabs = ['health', 'studies', 'graduation', 'finance'];
+      const tabs = ['health', 'studies', 'graduation', 'raffle', 'finance'];
       tabs.forEach(t => {
         const content = document.getElementById(`tab-content-${t}`);
         if (content) content.classList.add('hidden');
@@ -899,7 +951,156 @@
 
       if (tabId === 'finance') {
         loadFinanceData();
+      } else if (tabId === 'raffle') {
+        loadRaffleData();
       }
+    }
+
+    // ================= DADOS DA RIFA =================
+    let raffleBuyersData = [];
+
+    function initRaffleCountdown() {
+      const targetDate = new Date("2026-12-08T11:00:00").getTime(); [1]
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const diff = targetDate - now;
+
+        if (diff <= 0) {
+          document.getElementById('cd-days').innerText = "0";
+          document.getElementById('cd-hours').innerText = "0";
+          document.getElementById('cd-mins').innerText = "0";
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        const dEl = document.getElementById('cd-days');
+        const hEl = document.getElementById('cd-hours');
+        const mEl = document.getElementById('cd-mins');
+
+        if (dEl) dEl.innerText = days;
+        if (hEl) hEl.innerText = hours;
+        if (mEl) mEl.innerText = mins;
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 60000);
+    }
+
+    async function loadRaffleData() {
+      const listEl = document.getElementById('raffle-buyers-list');
+      if (listEl) listEl.innerHTML = `<p class="text-xs opacity-50 py-4 text-center">Buscando dados da planilha da rifa...</p>`;
+
+      try {
+        const res = await fetch(RAFFLE_SCRIPT_URL);
+        const data = await res.json();
+
+        if (data && data.status === 'success' && Array.isArray(data.compradores)) {
+          raffleBuyersData = data.compradores;
+
+          let totalCotas = 0;
+          raffleBuyersData.forEach(c => totalCotas += Number(c.cotas || 1));
+          const totalArrecadado = totalCotas * RAFFLE_TICKET_PRICE;
+
+          document.getElementById('raffle-total-raised').innerText = `R$ ${totalArrecadado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-total-quotas').innerText = totalCotas.toLocaleString('pt-BR');
+          document.getElementById('raffle-total-buyers').innerText = raffleBuyersData.length.toLocaleString('pt-BR');
+
+          renderRaffleBuyers();
+        } else {
+          listEl.innerHTML = `<p class="text-xs opacity-50 py-4 text-center">Nenhum comprador encontrado na planilha.</p>`;
+        }
+      } catch (err) {
+        console.error("Erro ao carregar rifa:", err);
+        listEl.innerHTML = `<p class="text-xs text-rose-500 py-4 text-center">Falha ao ler dados da rifa. Certifique-se de que o Apps Script foi implantado com 'Qualquer pessoa'.</p>`;
+      }
+    }
+
+    function renderRaffleBuyers() {
+      const searchInput = document.getElementById('raffle-search');
+      const term = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      const listEl = document.getElementById('raffle-buyers-list');
+      if (!listEl) return;
+
+      let list = raffleBuyersData;
+      if (term) {
+        list = list.filter(c => 
+          (c.nome || '').toLowerCase().includes(term) ||
+          (c.telefone || '').includes(term)
+        );
+      }
+
+      if (list.length === 0) {
+        listEl.innerHTML = `<p class="text-xs opacity-50 py-4 text-center">Nenhum comprador encontrado com esse termo.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = "";
+      list.forEach((c, idx) => {
+        const row = document.createElement('div');
+        row.className = "py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs";
+        
+        row.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-sm">${c.nome || 'Apoiador'}</span>
+              <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full font-bold">
+                ${c.cotas} ${c.cotas > 1 ? 'cotas' : 'cota'} (R$ ${(c.cotas * RAFFLE_TICKET_PRICE).toFixed(2)})
+              </span>
+            </div>
+            <p class="text-[11px] opacity-60 mt-0.5">📱 ${c.telefone || 'Sem telefone'} • 📅 ${c.data || 'Registrado'}</p>
+          </div>
+          
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <input type="text" id="nums-${idx}" placeholder="Ex: 20, 21" value="${c.numeros || ''}"
+                   class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-2.5 py-1.5 text-xs text-white w-28 sm:w-32 focus:outline-none focus:border-neutral-500">
+            <button onclick="sendRaffleWhatsApp('${encodeURIComponent(c.nome)}', '${c.telefone}', 'nums-${idx}')" 
+                    class="bg-[#25D366] hover:bg-[#20ba5a] text-black font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shrink-0">
+              <span>📲</span> <span>WhatsApp</span>
+            </button>
+          </div>
+        `;
+        listEl.appendChild(row);
+      });
+    }
+
+    function sendRaffleWhatsApp(encodedNome, telefone, inputId) {
+      const nome = decodeURIComponent(encodedNome);
+      const numerosInput = document.getElementById(inputId);
+      const numeros = numerosInput ? numerosInput.value.trim() : "";
+
+      if (!numeros) {
+        alert("Digite os números da sorte antes de enviar!");
+        if (numerosInput) numerosInput.focus();
+        return;
+      }
+
+      const foneLimpo = String(telefone).replace(/\D/g, "");
+      if (!foneLimpo) {
+        alert("Comprador sem número de WhatsApp cadastrado!");
+        return;
+      }
+
+      const mensagem = 
+        `Olá, *${nome}*! Tudo bem? 🎓\n\n` +
+        `Confirmamos o seu pagamento da *Rifa da Minha Formatura*! Muito obrigado de coração pelo apoio! 🙏\n` +
+        `— *Marco Antônio*\n\n` +
+        `🎟️ *SEUS NÚMEROS DA SORTE:*\n` +
+        `👉 *${numeros}*\n\n` +
+        `🎥 *SORTEIO AO VIVO:*\n` +
+        `📅 08/12/2026 às 11:00 [1]\n` +
+        `📱 No Insta: @euphoria.formaturas (depois no YouTube da Euphoria Formaturas) [1]\n\n` +
+        `🎁 *Você está concorrendo a:*\n` +
+        `🥇 1º: Viagem para Cidade do Cabo (África do Sul) + acompanhante! [1]\n` +
+        `🥈 2º: Caixa de Som JBL PartyBox Encore 2 [1]\n` +
+        `🥉 3º: Kindle Colorsoft 16GB Tela Colorida [1]\n\n` +
+        `Guarde esta mensagem como seu comprovante oficial. Boa sorte! 🍀✨`;
+
+      const url = `https://api.whatsapp.com/send?phone=55${foneLimpo}&text=${encodeURIComponent(mensagem)}`;
+      window.open(url, "_blank");
     }
 
     // ================= DADOS DE SAÚDE =================
@@ -920,7 +1121,6 @@
           .limit(14);
 
         if (error) {
-          console.error("Erro ao buscar saúde:", error);
           if (syncEl) syncEl.innerText = "Erro no sync";
           return;
         }
@@ -937,11 +1137,8 @@
         const caloriesVal = Number(latest.calories || 0);
         
         let sleepVal = Number(latest.sleep_hours || 0);
-        if (sleepVal > 300) {
-          sleepVal = sleepVal / 3600;
-        } else if (sleepVal > 24) {
-          sleepVal = sleepVal / 60;
-        }
+        if (sleepVal > 300) sleepVal = sleepVal / 3600;
+        else if (sleepVal > 24) sleepVal = sleepVal / 60;
 
         const todayStepsEl = document.getElementById('today-steps');
         if (todayStepsEl) todayStepsEl.innerText = stepsVal.toLocaleString('pt-BR');
@@ -1009,7 +1206,6 @@
     }
 
     function setChartMetric(metric) {
-      triggerHaptic('light');
       selectedMetric = metric;
       const btnSteps = document.getElementById('btn-tab-steps');
       const btnCal = document.getElementById('btn-tab-calories');
@@ -1109,7 +1305,6 @@
     let monthlyBudget = Number(localStorage.getItem('hub_monthly_budget')) || 3000;
 
     function changeMonthlyBudget() {
-      triggerHaptic('light');
       const input = prompt("Digite o valor da sua meta de gastos mensal (R$):", monthlyBudget);
       if (input !== null) {
         const val = parseFloat(input.replace(/\./g, '').replace(',', '.'));
@@ -1117,13 +1312,11 @@
           monthlyBudget = val;
           localStorage.setItem('hub_monthly_budget', monthlyBudget.toString());
           recalculateFinanceStats();
-          triggerHaptic('success');
         }
       }
     }
 
     function setFinancePeriod(period) {
-      triggerHaptic('light');
       currentFinancePeriod = period;
       const periods = ['month', 'year', 'all'];
       periods.forEach(p => {
@@ -1139,7 +1332,6 @@
     }
 
     function setFinanceView(view) {
-      triggerHaptic('light');
       const btnList = document.getElementById('btn-view-list');
       const btnCal = document.getElementById('btn-view-calendar');
       const viewList = document.getElementById('finance-view-list');
@@ -1160,7 +1352,6 @@
     }
 
     function changeCalendarYear(delta) {
-      triggerHaptic('light');
       currentCalendarYear += delta;
       const yrEl = document.getElementById('calendar-current-year');
       if (yrEl) yrEl.innerText = currentCalendarYear;
@@ -1198,7 +1389,6 @@
       const currentYearStr = now.getFullYear().toString();
       const currentMonthStr = `${currentYearStr}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-      // 1. Cálculo da Meta de Gastos do Mês Corrente
       const monthExpenses = currentFinanceRecords
         .filter(r => r.type === 'expense' && (r.date || '').startsWith(currentMonthStr))
         .reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
@@ -1229,7 +1419,6 @@
         }
       }
 
-      // 2. Cálculo dos cards de Saldo pelo período selecionado
       let filtered = currentFinanceRecords;
       if (currentFinancePeriod === 'month') {
         filtered = currentFinanceRecords.filter(r => (r.date || '').startsWith(currentMonthStr));
@@ -1401,7 +1590,6 @@
     }
 
     function exportToCSV() {
-      triggerHaptic('success');
       if (!currentFinanceRecords || currentFinanceRecords.length === 0) {
         alert("Nenhum dado para exportar.");
         return;
@@ -1515,7 +1703,6 @@
 
     // ================= MODAL DE DETALHES DO DIA =================
     function openDayModal(dateStr) {
-      triggerHaptic('light');
       selectedModalDate = dateStr;
       const parts = dateStr.split('-');
       const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
@@ -1580,7 +1767,6 @@
     }
 
     function closeDayModal() {
-      triggerHaptic('light');
       const modalEl = document.getElementById('day-modal');
       if (modalEl) modalEl.classList.add('hidden');
     }
@@ -1603,13 +1789,11 @@
     async function deleteFromModal(id) {
       if (!confirm("Deseja apagar este lançamento?")) return;
       await supabaseClient.from('financas').delete().eq('id', id);
-      triggerHaptic('medium');
       await loadFinanceData();
       openDayModal(selectedModalDate);
     }
 
     function startEditing(id) {
-      triggerHaptic('light');
       const item = currentFinanceRecords.find(r => r.id === id);
       if (!item) return;
 
@@ -1631,7 +1815,6 @@
     }
 
     function cancelEditing() {
-      triggerHaptic('light');
       document.getElementById('editing-tx-id').value = "";
       document.getElementById('tx-desc').value = "";
       document.getElementById('tx-amount').value = "";
@@ -1663,7 +1846,6 @@
           .eq('id', editingId);
 
         if (error) {
-          triggerHaptic('error');
           alert("Erro ao atualizar: " + error.message);
           return;
         }
@@ -1673,13 +1855,11 @@
           .insert([{ description: desc, amount: amount, type: type, date: date, category: category }]);
 
         if (error) {
-          triggerHaptic('error');
           alert("Erro ao adicionar: " + error.message);
           return;
         }
       }
 
-      triggerHaptic('success');
       cancelEditing();
       loadFinanceData();
     }
@@ -1687,7 +1867,6 @@
     async function deleteTransaction(id) {
       if (!confirm("Deseja apagar este lançamento?")) return;
       await supabaseClient.from('financas').delete().eq('id', id);
-      triggerHaptic('medium');
       if (document.getElementById('editing-tx-id').value === id) {
         cancelEditing();
       }

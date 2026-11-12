@@ -146,7 +146,6 @@
     <aside id="sidebar" class="w-full md:w-56 p-3.5 flex flex-col justify-between shrink-0 z-30 transition-all duration-300 border-b md:border-b-0 md:border-r">
       
       <div class="space-y-4">
-        <!-- Cabeçalho da Sidebar + Botão de Recolher -->
         <div class="sidebar-header flex items-center justify-between px-1">
           <div class="sidebar-text overflow-hidden">
             <h1 class="text-sm font-black tracking-tight leading-none">Hub OS</h1>
@@ -159,7 +158,6 @@
           </button>
         </div>
 
-        <!-- Links da Navegação -->
         <nav class="space-y-1 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible pb-1 md:pb-0">
           <button id="nav-health" onclick="switchTab('health')" title="Saúde" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
             <svg class="w-4 h-4 text-rose-500 shrink-0 fill-current" viewBox="0 0 24 24">
@@ -180,7 +178,6 @@
         </nav>
       </div>
 
-      <!-- Rodapé: Botão de Tema & Bloqueio -->
       <div class="sidebar-footer pt-3 border-t border-[var(--border-color)] flex items-center justify-between md:flex-col md:items-stretch gap-2">
         <button onclick="toggleTheme()" id="theme-btn" title="Alternar Modo Claro/Escuro" class="flex items-center justify-center gap-1.5 text-xs card-apple border px-2.5 py-1.5 rounded-xl transition opacity-80 hover:opacity-100">
           <span id="theme-icon">☀️</span>
@@ -282,11 +279,24 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 3: FINANÇAS (COM EDIÇÃO E DATA) ================= -->
-      <section id="tab-content-finance" class="hidden h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
-        <header class="border-b border-[var(--border-color)] pb-4">
-          <h2 class="text-2xl font-black tracking-tight">Controle Financeiro</h2>
-          <p class="text-xs opacity-60">Supabase Database</p>
+      <!-- ================= ABA 3: FINANÇAS (COM CALENDÁRIO ANUAL INTEGRADO) ================= -->
+      <section id="tab-content-finance" class="h-full overflow-y-auto p-4 sm:p-8 max-w-5xl w-full mx-auto space-y-6">
+        
+        <!-- Cabeçalho de Finanças com Alternador (Lista / Calendário) -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
+          <div>
+            <h2 class="text-2xl font-black tracking-tight">Controle Financeiro</h2>
+            <p class="text-xs opacity-60">Supabase Database</p>
+          </div>
+          <!-- Seletor em Pílulas: Lista vs Calendário -->
+          <div class="card-apple border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
+            <button id="btn-view-list" onclick="setFinanceView('list')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition">
+              📋 Lista de Transações
+            </button>
+            <button id="btn-view-calendar" onclick="setFinanceView('calendar')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition">
+              📅 Calendário Anual
+            </button>
+          </div>
         </header>
 
         <!-- Cards de Resumo -->
@@ -317,33 +327,28 @@
           <form id="finance-form" onsubmit="handleTransactionSubmit(event)" class="grid grid-cols-1 sm:grid-cols-6 gap-3">
             <input type="hidden" id="editing-tx-id" value="">
             
-            <!-- Descrição -->
             <input type="text" id="tx-desc" placeholder="Descrição (ex: Restaurante)" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500 sm:col-span-2">
             
-            <!-- Valor -->
             <input type="number" step="0.01" id="tx-amount" placeholder="Valor (R$)" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
             
-            <!-- Data -->
             <input type="date" id="tx-date" required 
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
 
-            <!-- Tipo -->
             <select id="tx-type" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
               <option value="expense">🔴 Despesa</option>
               <option value="income">🟢 Receita</option>
             </select>
 
-            <!-- Botão Salvar -->
             <button type="submit" id="submit-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition">
               + Adicionar
             </button>
           </form>
         </div>
 
-        <!-- Lista de Lançamentos Recentes -->
-        <div class="card-apple rounded-2xl p-5 space-y-3 border">
+        <!-- SUB-VISÃO 1: LISTA DE TRANSAÇÕES -->
+        <div id="finance-view-list" class="card-apple rounded-2xl p-5 space-y-3 border">
           <div class="flex justify-between items-center">
             <h3 class="text-sm font-bold">Histórico de Transações</h3>
             <button onclick="loadFinanceData()" class="text-xs opacity-60 hover:opacity-100">Atualizar</button>
@@ -352,9 +357,71 @@
             <p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento cadastrado.</p>
           </div>
         </div>
+
+        <!-- SUB-VISÃO 2: CALENDÁRIO ANUAL COMPLETO -->
+        <div id="finance-view-calendar" class="hidden space-y-4">
+          <!-- Barra de Navegação do Ano do Calendário -->
+          <div class="card-apple rounded-2xl p-4 border flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-lg">📅</span>
+              <div>
+                <h3 class="text-sm font-bold">Calendário Anual de Lançamentos</h3>
+                <p class="text-[11px] opacity-60">🔴 Despesa • 🟢 Entrada (Clique no dia para ver detalhes)</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="changeCalendarYear(-1)" class="w-8 h-8 rounded-lg card-apple border flex items-center justify-center opacity-70 hover:opacity-100 transition">◀</button>
+              <span id="calendar-current-year" class="font-black text-base px-2">2026</span>
+              <button onclick="changeCalendarYear(1)" class="w-8 h-8 rounded-lg card-apple border flex items-center justify-center opacity-70 hover:opacity-100 transition">▶</button>
+            </div>
+          </div>
+
+          <!-- Grade dos 12 Meses -->
+          <div id="annual-calendar-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Gerado via JavaScript -->
+          </div>
+        </div>
+
       </section>
 
     </main>
+  </div>
+
+  <!-- ================= MODAL / POPUP: DETALHE DO DIA ================= -->
+  <div id="day-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="card-apple border rounded-3xl w-full max-w-md p-5 sm:p-6 space-y-4 shadow-2xl relative">
+      <div class="flex justify-between items-start border-b border-[var(--border-color)] pb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Lançamentos do Dia</span>
+          <h3 id="modal-date-title" class="text-lg font-black mt-0.5">--/--/----</h3>
+        </div>
+        <button onclick="closeDayModal()" class="w-8 h-8 rounded-full card-apple border flex items-center justify-center opacity-60 hover:opacity-100 transition">✕</button>
+      </div>
+
+      <!-- Balanço do Dia -->
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="p-2.5 rounded-xl card-apple border">
+          <span class="opacity-60 block text-[10px] uppercase font-semibold">Entradas</span>
+          <span id="modal-day-income" class="font-bold text-emerald-500 text-sm">R$ 0,00</span>
+        </div>
+        <div class="p-2.5 rounded-xl card-apple border">
+          <span class="opacity-60 block text-[10px] uppercase font-semibold">Saídas</span>
+          <span id="modal-day-expense" class="font-bold text-rose-500 text-sm">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- Lista de Itens do Dia -->
+      <div id="modal-tx-list" class="max-h-60 overflow-y-auto divide-y divide-[var(--border-color)] pr-1 space-y-1">
+        <!-- Renderizado dinamicamente -->
+      </div>
+
+      <!-- Botão Rápido para adicionar gasto/receita nesta data -->
+      <div class="pt-2 border-t border-[var(--border-color)] flex justify-end">
+        <button onclick="addTxForCurrentModalDate()" class="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3.5 py-2 rounded-xl transition">
+          + Lançar nesta data
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -606,8 +673,36 @@
       });
     }
 
-    // ================= FINANÇAS (CRUD COM EDIÇÃO E DATA) =================
+    // ================= FINANÇAS (LISTA + CALENDÁRIO ANUAL) =================
     let currentFinanceRecords = [];
+    let currentCalendarYear = new Date().getFullYear();
+    let selectedModalDate = "";
+
+    function setFinanceView(view) {
+      const btnList = document.getElementById('btn-view-list');
+      const btnCal = document.getElementById('btn-view-calendar');
+      const viewList = document.getElementById('finance-view-list');
+      const viewCal = document.getElementById('finance-view-calendar');
+
+      if (view === 'calendar') {
+        btnCal.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition";
+        btnList.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition";
+        viewList.classList.add('hidden');
+        viewCal.classList.remove('hidden');
+        renderAnnualCalendar();
+      } else {
+        btnList.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition";
+        btnCal.className = "flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition";
+        viewCal.classList.add('hidden');
+        viewList.classList.remove('hidden');
+      }
+    }
+
+    function changeCalendarYear(delta) {
+      currentCalendarYear += delta;
+      document.getElementById('calendar-current-year').innerText = currentCalendarYear;
+      renderAnnualCalendar();
+    }
 
     function initDefaultDate() {
       const today = new Date().toISOString().split('T')[0];
@@ -622,8 +717,7 @@
         const { data, error } = await supabaseClient
           .from('financas')
           .select('*')
-          .order('date', { ascending: false })
-          .limit(50);
+          .order('date', { ascending: false });
 
         if (error) return;
 
@@ -634,6 +728,7 @@
         if (!data || data.length === 0) {
           listEl.innerHTML = `<p class="text-xs opacity-50 py-3 text-center">Nenhum lançamento cadastrado.</p>`;
           updateBalanceDisplay(0, 0);
+          renderAnnualCalendar();
           return;
         }
 
@@ -643,7 +738,6 @@
           if (item.type === 'income') income += val;
           if (item.type === 'expense') expense += val;
 
-          // Formatar data para exibição (DD/MM/AAAA)
           let dateDisplay = "Hoje";
           if (item.date) {
             const parts = item.date.split('-');
@@ -666,11 +760,9 @@
               <span class="font-black text-sm ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
                 ${isExp ? '-' : '+'} R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
               </span>
-              <!-- Botão Editar -->
               <button onclick="startEditing('${item.id}')" title="Editar lançamento" class="p-1.5 opacity-60 hover:opacity-100 hover:bg-neutral-800/40 rounded-lg transition">
                 ✏️
               </button>
-              <!-- Botão Excluir -->
               <button onclick="deleteTransaction('${item.id}')" title="Excluir lançamento" class="p-1.5 opacity-40 hover:opacity-100 hover:text-rose-500 transition">
                 ✕
               </button>
@@ -680,6 +772,7 @@
         });
 
         updateBalanceDisplay(income, expense);
+        renderAnnualCalendar();
       } catch (err) {
         console.error("Falha finanças:", err);
       }
@@ -694,7 +787,188 @@
       balEl.className = `text-2xl sm:text-3xl font-black mt-1 ${bal >= 0 ? '' : 'text-rose-500'}`;
     }
 
-    // Iniciar edição de um card
+    // ================= RENDERIZADOR DO CALENDÁRIO ANUAL =================
+    const MONTH_NAMES = [
+      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+      "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+    const WEEK_DAYS = ["D", "S", "T", "Q", "Q", "S", "S"];
+
+    function renderAnnualCalendar() {
+      const container = document.getElementById('annual-calendar-grid');
+      if (!container) return;
+      container.innerHTML = "";
+
+      // Mapa de datas com transações: 'YYYY-MM-DD' => { hasIncome: bool, hasExpense: bool, count: int }
+      const txDateMap = {};
+      currentFinanceRecords.forEach(r => {
+        if (!r.date) return;
+        if (!txDateMap[r.date]) {
+          txDateMap[r.date] = { hasIncome: false, hasExpense: false, count: 0 };
+        }
+        if (r.type === 'income') txDateMap[r.date].hasIncome = true;
+        if (r.type === 'expense') txDateMap[r.date].hasExpense = true;
+        txDateMap[r.date].count += 1;
+      });
+
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      for (let month = 0; month < 12; month++) {
+        const monthCard = document.createElement('div');
+        monthCard.className = "card-apple rounded-2xl p-3.5 border flex flex-col justify-between";
+
+        // Título do Mês
+        const monthHeader = document.createElement('div');
+        monthHeader.className = "flex justify-between items-center mb-2.5 px-1";
+        monthHeader.innerHTML = `
+          <h4 class="text-xs font-black tracking-wider uppercase">${MONTH_NAMES[month]}</h4>
+          <span class="text-[10px] opacity-40">${currentCalendarYear}</span>
+        `;
+        monthCard.appendChild(monthHeader);
+
+        // Grade dos Dias
+        const daysGrid = document.createElement('div');
+        daysGrid.className = "grid grid-cols-7 gap-1 text-center text-[10px]";
+
+        // Cabeçalhos dos dias da semana (D S T Q Q S S)
+        WEEK_DAYS.forEach(d => {
+          const wDay = document.createElement('div');
+          wDay.className = "opacity-40 font-bold py-0.5";
+          wDay.innerText = d;
+          daysGrid.appendChild(wDay);
+        });
+
+        // Primeiro dia do mês e total de dias
+        const firstDayOfWeek = new Date(currentCalendarYear, month, 1).getDay();
+        const daysInMonth = new Date(currentCalendarYear, month + 1, 0).getDate();
+
+        // Células em branco antes do dia 1
+        for (let i = 0; i < firstDayOfWeek; i++) {
+          const blank = document.createElement('div');
+          blank.className = "h-7";
+          daysGrid.appendChild(blank);
+        }
+
+        // Dias do mês
+        for (let day = 1; day <= daysInMonth; day++) {
+          const monthPad = String(month + 1).padStart(2, '0');
+          const dayPad = String(day).padStart(2, '0');
+          const dateStr = `${currentCalendarYear}-${monthPad}-${dayPad}`;
+
+          const dayCell = document.createElement('button');
+          dayCell.type = "button";
+          dayCell.className = "h-7 w-full rounded-lg flex flex-col items-center justify-center relative transition hover:bg-white/10 active:scale-95";
+          
+          if (dateStr === todayStr) {
+            dayCell.classList.add('ring-1', 'ring-emerald-500', 'font-black');
+          }
+
+          const txInfo = txDateMap[dateStr];
+          let indicatorsHtml = "";
+
+          if (txInfo) {
+            indicatorsHtml = `<div class="flex items-center justify-center gap-0.5 mt-0.5">`;
+            if (txInfo.hasExpense) {
+              indicatorsHtml += `<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>`;
+            }
+            if (txInfo.hasIncome) {
+              indicatorsHtml += `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>`;
+            }
+            indicatorsHtml += `</div>`;
+          }
+
+          dayCell.innerHTML = `
+            <span class="leading-none ${txInfo ? 'font-bold' : 'opacity-70'}">${day}</span>
+            ${indicatorsHtml}
+          `;
+
+          // Evento de clique para abrir o modal do dia
+          dayCell.onclick = () => openDayModal(dateStr);
+          daysGrid.appendChild(dayCell);
+        }
+
+        monthCard.appendChild(daysGrid);
+        container.appendChild(monthCard);
+      }
+    }
+
+    // ================= MODAL DE DETALHES DO DIA =================
+    function openDayModal(dateStr) {
+      selectedModalDate = dateStr;
+      const parts = dateStr.split('-');
+      const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+      
+      document.getElementById('modal-date-title').innerText = formattedDate;
+
+      // Filtra lançamentos daquele dia
+      const dayTxs = currentFinanceRecords.filter(r => r.date === dateStr);
+      let dayIncome = 0;
+      let dayExpense = 0;
+
+      const listContainer = document.getElementById('modal-tx-list');
+      listContainer.innerHTML = "";
+
+      if (dayTxs.length === 0) {
+        listContainer.innerHTML = `<p class="text-xs opacity-50 py-4 text-center">Nenhuma movimentação neste dia.</p>`;
+      } else {
+        dayTxs.forEach(item => {
+          const val = Number(item.amount || 0);
+          const isExp = item.type === 'expense';
+          if (isExp) dayExpense += val;
+          else dayIncome += val;
+
+          const row = document.createElement('div');
+          row.className = "py-2.5 flex justify-between items-center text-xs";
+          row.innerHTML = `
+            <div>
+              <p class="font-bold text-sm">${item.description}</p>
+              <span class="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${isExp ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'}">
+                ${isExp ? 'Despesa' : 'Entrada'}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="font-black text-sm ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
+                ${isExp ? '-' : '+'} R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+              </span>
+              <button onclick="editFromModal('${item.id}')" title="Editar" class="p-1 opacity-60 hover:opacity-100">✏️</button>
+              <button onclick="deleteFromModal('${item.id}')" title="Excluir" class="p-1 opacity-40 hover:opacity-100 hover:text-rose-500">✕</button>
+            </div>
+          `;
+          listContainer.appendChild(row);
+        });
+      }
+
+      document.getElementById('modal-day-income').innerText = `R$ ${dayIncome.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+      document.getElementById('modal-day-expense').innerText = `R$ ${dayExpense.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+      document.getElementById('day-modal').classList.remove('hidden');
+    }
+
+    function closeDayModal() {
+      document.getElementById('day-modal').classList.add('hidden');
+    }
+
+    function addTxForCurrentModalDate() {
+      closeDayModal();
+      setFinanceView('list');
+      document.getElementById('tx-date').value = selectedModalDate;
+      document.getElementById('tx-desc').focus();
+    }
+
+    function editFromModal(id) {
+      closeDayModal();
+      setFinanceView('list');
+      startEditing(id);
+    }
+
+    async function deleteFromModal(id) {
+      if (!confirm("Deseja apagar este lançamento?")) return;
+      await supabaseClient.from('financas').delete().eq('id', id);
+      await loadFinanceData();
+      openDayModal(selectedModalDate);
+    }
+
+    // Iniciar edição
     function startEditing(id) {
       const item = currentFinanceRecords.find(r => r.id === id);
       if (!item) return;
@@ -710,11 +984,9 @@
       document.getElementById('submit-btn').className = "bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-xl px-4 py-2 text-xs sm:text-sm transition";
       document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
-      // Scroll suave até o formulário
       document.getElementById('finance-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Cancelar edição e voltar para novo lançamento
     function cancelEditing() {
       document.getElementById('editing-tx-id').value = "";
       document.getElementById('tx-desc').value = "";
@@ -728,7 +1000,6 @@
       document.getElementById('cancel-edit-btn').classList.add('hidden');
     }
 
-    // Salvar (Insert ou Update)
     async function handleTransactionSubmit(e) {
       e.preventDefault();
       const editingId = document.getElementById('editing-tx-id').value;
@@ -740,7 +1011,6 @@
       if (!desc || isNaN(amount) || amount <= 0 || !date) return;
 
       if (editingId) {
-        // MODO UPDATE
         const { error } = await supabaseClient
           .from('financas')
           .update({ description: desc, amount: amount, type: type, date: date })
@@ -751,7 +1021,6 @@
           return;
         }
       } else {
-        // MODO INSERT
         const { error } = await supabaseClient
           .from('financas')
           .insert([{ description: desc, amount: amount, type: type, date: date }]);

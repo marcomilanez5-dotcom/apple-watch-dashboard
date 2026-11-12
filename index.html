@@ -836,7 +836,13 @@
 
         const stepsVal = Number(latest.steps || 0);
         const caloriesVal = Number(latest.calories || 0);
-        const sleepVal = Number(latest.sleep_hours || 0);
+        // Se o valor for em segundos (maior que 24), converte automaticamente para horas
+let sleepVal = Number(latest.sleep_hours || 0);
+if (sleepVal > 300) {
+  sleepVal = sleepVal / 3600; // Converte segundos para horas
+} else if (sleepVal > 24) {
+  sleepVal = sleepVal / 60;   // Converte minutos para horas
+}
 
         document.getElementById('today-steps').innerText = stepsVal.toLocaleString('pt-BR');
         document.getElementById('today-calories').innerHTML = `${caloriesVal.toFixed(0)} <span class="text-sm font-normal opacity-60">kcal</span>`;
@@ -935,12 +941,13 @@
         labelName = "Calorias Ativas";
         barColor = "rgba(251, 146, 60, 0.85)";
         unit = "kcal/dia";
-      } else if (selectedMetric === 'sleep') {
-        values = rawHealthData.map(i => Number(i.sleep_hours || 0));
-        labelName = "Tempo de Sono";
-        barColor = "rgba(129, 140, 248, 0.85)";
-        unit = "horas/noite";
-      }
+      } } else if (selectedMetric === 'sleep') {
+  values = rawHealthData.map(i => {
+    let s = Number(i.sleep_hours || 0);
+    if (s > 300) s = s / 3600;
+    else if (s > 24) s = s / 60;
+    return Number(s.toFixed(1));
+  });
 
       const total = values.reduce((a, b) => a + b, 0);
       const avg = total / values.length;

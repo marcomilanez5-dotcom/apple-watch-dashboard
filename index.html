@@ -189,7 +189,6 @@
 
     <!-- BARRA LATERAL DESKTOP -->
     <aside id="sidebar" class="hidden md:flex w-56 p-3.5 flex-col justify-between shrink-0 z-30 transition-all duration-300 border-r border-[var(--border-color)]">
-      
       <div class="space-y-4">
         <div class="sidebar-header flex items-center justify-between px-1">
           <div class="sidebar-text overflow-hidden">
@@ -244,7 +243,6 @@
           <span class="sidebar-text">Bloquear</span>
         </button>
       </div>
-
     </aside>
 
     <!-- ÁREA DE CONTEÚDO PRINCIPAL -->
@@ -276,13 +274,11 @@
                 <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="40" stroke="rgba(244, 63, 94, 0.15)" stroke-width="8" fill="none"/>
                   <circle id="ring-cal-progress" class="ring-circle" cx="50" cy="50" r="40" stroke="#f43f5e" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
-                  
                   <circle cx="50" cy="50" r="28" stroke="rgba(16, 185, 129, 0.15)" stroke-width="8" fill="none"/>
                   <circle id="ring-step-progress" class="ring-circle" cx="50" cy="50" r="28" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
                 </svg>
                 <span class="absolute text-xl"></span>
               </div>
-
               <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Atividade Diária</span>
                 <h3 class="text-lg font-black mt-0.5">Metas de Movimento</h3>
@@ -384,14 +380,14 @@
         </iframe>
       </section>
 
-      <!-- ================= ABA 4: RIFA (DASHBOARD NATIVO) ================= -->
+      <!-- ================= ABA 4: RIFA (DIVISÃO R$ 10 = R$ 4,35 MEU / R$ 2,65 EUPHORIA) ================= -->
       <section id="tab-content-raffle" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
           <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
             <div>
               <h2 class="text-xl sm:text-2xl font-black tracking-tight">Painel da Rifa 🎓</h2>
-              <p class="text-xs opacity-60">Sincronizado diretamente com a Planilha da Formatura</p>
+              <p class="text-xs opacity-60">Valores para amortização direta no boleto da formatura (isolado de Finanças)</p>
             </div>
             <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5 transition">
               <span>🔄</span> <span>Atualizar Dados</span>
@@ -421,23 +417,37 @@
             </div>
           </div>
 
-          <!-- Cards de Métricas da Rifa -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Cards de Métricas com a Divisão Real das Cotas -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- 1. Total Bruto (R$ 10/cota) -->
             <div class="card-apple rounded-2xl p-5 border">
-              <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Total Arrecadado</span>
-              <div id="raffle-total-raised" class="text-2xl sm:text-3xl font-black mt-1">R$ 0,00</div>
-              <p class="text-[11px] opacity-60 mt-1">Valor acumulado</p>
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Total Arrecadado</span>
+              <div id="raffle-total-raised" class="text-2xl font-black mt-1">R$ 0,00</div>
+              <p class="text-[11px] opacity-60 mt-1">Venda bruta (R$ 10/cota) [1]</p>
             </div>
+
+            <!-- 2. Seu Abate no Boleto (R$ 4,35/cota) -->
+            <div class="card-apple rounded-2xl p-5 border bg-emerald-500/5">
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Abate no Meu Boleto</span>
+              <div id="raffle-my-share" class="text-2xl font-black mt-1 text-emerald-400">R$ 0,00</div>
+              <p class="text-[11px] text-emerald-500/80 mt-1">R$ 4,35 por cota vendida</p>
+            </div>
+
+            <!-- 3. Cota Euphoria (R$ 2,65/cota) -->
             <div class="card-apple rounded-2xl p-5 border">
-              <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Cotas Vendidas</span>
-              <div id="raffle-total-quotas" class="text-2xl sm:text-3xl font-black mt-1">0</div>
-              <p class="text-[11px] opacity-60 mt-1">Total de números emitidos</p>
+              <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Cota Euphoria</span>
+              <div id="raffle-euphoria-share" class="text-2xl font-black mt-1">R$ 0,00</div>
+              <p class="text-[11px] opacity-60 mt-1">R$ 2,65 por cota (repasse)</p>
             </div>
+
+            <!-- 4. Cotas Vendidas & Apoiadores -->
             <div class="card-apple rounded-2xl p-5 border">
-              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Compradores</span>
-              <div id="raffle-total-buyers" class="text-2xl sm:text-3xl font-black mt-1">0</div>
-              <p class="text-[11px] opacity-60 mt-1">Apoiadores registrados [1]</p>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Cotas / Apoiadores</span>
+              <div id="raffle-total-quotas" class="text-2xl font-black mt-1">0 cotas</div>
+              <p id="raffle-total-buyers" class="text-[11px] opacity-60 mt-1">0 compradores registrados [1]</p>
             </div>
+
           </div>
 
           <!-- Lista de Compradores e Disparador de WhatsApp -->
@@ -445,7 +455,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
                 <h3 class="text-sm font-bold">Compradores & Envio de Números</h3>
-                <p class="text-xs opacity-60">Cole os números e clique para enviar no WhatsApp com mensagem pronta [1]</p>
+                <p class="text-xs opacity-60">Cole os números da sorte e envie no WhatsApp com mensagem pronta [1]</p>
               </div>
               <input type="text" id="raffle-search" oninput="renderRaffleBuyers()" placeholder="🔍 Buscar comprador..." 
                      class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-neutral-500 w-full sm:w-56">
@@ -459,7 +469,7 @@
         </div>
       </section>
 
-      <!-- ================= ABA 5: FINANÇAS ================= -->
+      <!-- ================= ABA 5: FINANÇAS (100% ISOLADA DA RIFA) ================= -->
       <section id="tab-content-finance" class="hidden w-full h-full overflow-y-auto">
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           
@@ -693,11 +703,15 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRob3p6dWhsd29qd2FqdmlsYW9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzNTk4MzUsImV4cCI6MjEwOTkzNTgzNX0._eJO3ZXKd8vNnUxLWc71BO9ksIYK9MFIg0WgGNxy_f4";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // URL do Google Apps Script da sua Rifa [1]:
+    // ================= CONFIGURAÇÃO DA RIFA =================
     const RAFFLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAkfogSU-_KHVycB2sJII0SfYcTQsjibOvhRGGXjUnW4mCYxnx_1rFNHoR0mL58iWa/exec";
-    const RAFFLE_TICKET_PRICE = 10.00;
+    
+    // Divisão Oficial da Rifa [1]:
+    const PRICE_BRUTO = 10.00;     // Preço de venda cobrado [1]
+    const PRICE_MEU_BOLETO = 4.35;  // Abate direto no boleto da formatura [1]
+    const PRICE_EUPHORIA = 2.65;   // Repasse para a Euphoria [1]
 
-    // ================= CATEGORIAS =================
+    // ================= CATEGORIAS FINANÇAS =================
     const EXPENSE_CATEGORIES = [
       { id: "Mercado", label: "🛒 Mercado & Alimentação", color: "#34D399" },
       { id: "Fixos", label: "🏠 Contas Fixas & Moradia", color: "#60A5FA" },
@@ -809,7 +823,7 @@
       }
     }
 
-    // ================= BLOQUEIO / PIN (1998) =================
+    // ================= BLOQUEIO / PIN =================
     const CORRECT_PIN = "1998";
     let currentInputPin = "";
 
@@ -1003,11 +1017,17 @@
 
           let totalCotas = 0;
           raffleBuyersData.forEach(c => totalCotas += Number(c.cotas || 1));
-          const totalArrecadado = totalCotas * RAFFLE_TICKET_PRICE;
 
-          document.getElementById('raffle-total-raised').innerText = `R$ ${totalArrecadado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-          document.getElementById('raffle-total-quotas').innerText = totalCotas.toLocaleString('pt-BR');
-          document.getElementById('raffle-total-buyers').innerText = raffleBuyersData.length.toLocaleString('pt-BR');
+          // Cálculos Exatos da Divisão [1]:
+          const totalArrecadadoBruto = totalCotas * PRICE_BRUTO;       // R$ 10,00 [1]
+          const meuAbateBoleto = totalCotas * PRICE_MEU_BOLETO;         // R$ 4,35 [1]
+          const repasseEuphoria = totalCotas * PRICE_EUPHORIA;          // R$ 2,65 [1]
+
+          document.getElementById('raffle-total-raised').innerText = `R$ ${totalArrecadadoBruto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-my-share').innerText = `R$ ${meuAbateBoleto.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-euphoria-share').innerText = `R$ ${repasseEuphoria.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+          document.getElementById('raffle-total-quotas').innerText = `${totalCotas} cotas`;
+          document.getElementById('raffle-total-buyers').innerText = `${raffleBuyersData.length} apoiadores [1]`;
 
           renderRaffleBuyers();
         } else {
@@ -1048,7 +1068,7 @@
             <div class="flex items-center gap-2">
               <span class="font-bold text-sm">${c.nome || 'Apoiador'}</span>
               <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full font-bold">
-                ${c.cotas} ${c.cotas > 1 ? 'cotas' : 'cota'} (R$ ${(c.cotas * RAFFLE_TICKET_PRICE).toFixed(2)})
+                ${c.cotas} ${c.cotas > 1 ? 'cotas' : 'cota'} (R$ ${(c.cotas * PRICE_BRUTO).toFixed(2)}) [1]
               </span>
             </div>
             <p class="text-[11px] opacity-60 mt-0.5">📱 ${c.telefone || 'Sem telefone'} • 📅 ${c.data || 'Registrado'}</p>
@@ -1296,7 +1316,7 @@
       });
     }
 
-    // ================= FINANÇAS & META MENSAL =================
+    // ================= FINANÇAS (TOTALMENTE INDEPENDENTE) =================
     let currentFinanceRecords = [];
     let currentCalendarYear = new Date().getFullYear();
     let selectedModalDate = "";

@@ -367,12 +367,21 @@
     }
     ::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.4); }
 
+    #studies-frame, #graduation-frame {
+      width: 100%;
+      height: 100%;
+      min-height: calc(100vh - 10rem);
+      background: transparent;
+    }
+    @media (min-width: 768px) {
+      #studies-frame, #graduation-frame { min-height: calc(100vh - 7rem); }
+    }
     body:not(.light-theme) #studies-frame,
     body:not(.light-theme) #graduation-frame {
       filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95);
     }
     body.light-theme #studies-frame,
-    body.light-theme #graduation-frame { filter: none; }
+    body.light-theme #graduation-frame { filter: none; background: #fff; }
 
     /* Entradas: deceleram de baixo com leve overshoot, sem fade puro */
     @keyframes riseIn {
@@ -388,6 +397,12 @@
     #tab-content-raffle:not(.hidden) > div,
     #tab-content-finance:not(.hidden) > div {
       animation: tabIn 0.5s var(--ease-out) both;
+    }
+    #tab-content-studies:not(.hidden),
+    #tab-content-graduation:not(.hidden) {
+      display: block;
+      height: 100%;
+      animation: tabIn 0.35s var(--ease-out) both;
     }
     #tab-content-health:not(.hidden) > div > *,
     #tab-content-raffle:not(.hidden) > div > *,
@@ -841,22 +856,24 @@
       </section>
 
       <!-- ================= ABA 2: ESTUDOS ================= -->
-      <section id="tab-content-studies" class="hidden w-full h-full p-0 m-0 bg-white">
+      <section id="tab-content-studies" class="hidden w-full h-full p-0 m-0 overflow-hidden">
         <iframe 
           id="studies-frame"
           src="https://script.google.com/macros/s/AKfycbwEP9XzZGhzYb7B1uzXR3PYXu9OAyPzb7NB-drsGbskf7YKiiY3vIM65jSsNtUeaxo/exec" 
-          class="w-full h-full border-0 block transition-all duration-300"
-          allow="fullscreen; camera; microphone">
+          class="w-full h-full min-h-full border-0 block bg-transparent"
+          allow="fullscreen; camera; microphone"
+          referrerpolicy="no-referrer-when-downgrade">
         </iframe>
       </section>
 
       <!-- ================= ABA 3: FORMATURA ================= -->
-      <section id="tab-content-graduation" class="hidden w-full h-full p-0 m-0 bg-white">
+      <section id="tab-content-graduation" class="hidden w-full h-full p-0 m-0 overflow-hidden">
         <iframe 
           id="graduation-frame"
           src="https://script.google.com/macros/s/AKfycbwqMSM_IcTcaabEFd8vW5kZIvfvisQxBQrZJwT1t3z7Phw5QhHP8RlJg9XnUYbseI4o/exec" 
-          class="w-full h-full border-0 block transition-all duration-300"
-          allow="fullscreen; camera; microphone">
+          class="w-full h-full min-h-full border-0 block bg-transparent"
+          allow="fullscreen; camera; microphone"
+          referrerpolicy="no-referrer-when-downgrade">
         </iframe>
       </section>
 

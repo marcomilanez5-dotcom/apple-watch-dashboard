@@ -24,86 +24,220 @@
   <style>
     :root {
       --bg-main: #000000;
-      --bg-sidebar: #121214;
-      --bg-card: #1C1C1E;
+      --bg-sidebar: rgba(13, 13, 15, 0.82);
+      --bg-card: rgba(22, 22, 25, 0.58);
       --border-color: rgba(255, 255, 255, 0.08);
       --text-main: #F5F5F7;
-      --text-muted: #A1A1AA;
-      --input-bg: #18181B;
-      --nav-active-bg: rgba(255, 255, 255, 0.12);
-      --nav-hover-bg: rgba(255, 255, 255, 0.05);
-      --chart-grid: rgba(255, 255, 255, 0.05);
-      --chart-tick: #71717A;
+      --text-muted: #8E8E93;
+      --input-bg: rgba(255, 255, 255, 0.045);
+      --nav-active-bg: rgba(255, 255, 255, 0.09);
+      --nav-hover-bg: rgba(255, 255, 255, 0.045);
+      --chart-grid: rgba(255, 255, 255, 0.06);
+      --chart-tick: #8E8E93;
+      --apple-red: #FF375F;
+      --apple-green: #30D158;
+      --apple-blue: #0A84FF;
+      --apple-orange: #FF9F0A;
+      --apple-indigo: #5E5CE6;
+      --apple-yellow: #FFD60A;
+      --spring: cubic-bezier(0.22, 1.16, 0.36, 1);
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
     }
 
     body.light-theme {
       --bg-main: #F2F2F7;
-      --bg-sidebar: #E5E5EA;
-      --bg-card: #FFFFFF;
+      --bg-sidebar: rgba(255, 255, 255, 0.72);
+      --bg-card: rgba(255, 255, 255, 0.68);
       --border-color: rgba(0, 0, 0, 0.08);
       --text-main: #1C1C1E;
       --text-muted: #6B7280;
-      --input-bg: #F9FAFB;
-      --nav-active-bg: rgba(0, 0, 0, 0.08);
-      --nav-hover-bg: rgba(0, 0, 0, 0.04);
-      --chart-grid: rgba(0, 0, 0, 0.05);
+      --input-bg: rgba(0, 0, 0, 0.035);
+      --nav-active-bg: rgba(0, 0, 0, 0.07);
+      --nav-hover-bg: rgba(0, 0, 0, 0.035);
+      --chart-grid: rgba(0, 0, 0, 0.06);
       --chart-tick: #6B7280;
     }
+
+    * { -webkit-tap-highlight-color: transparent; }
 
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      text-rendering: optimizeLegibility;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.012em;
+      transition: background-color 0.4s var(--ease-out), color 0.4s var(--ease-out);
       touch-action: manipulation;
     }
 
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -22%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(34% 38% at 12% 6%, rgba(255, 55, 95, 0.16), transparent 64%),
+        radial-gradient(38% 34% at 88% 12%, rgba(48, 209, 88, 0.12), transparent 62%),
+        radial-gradient(44% 42% at 76% 94%, rgba(10, 132, 255, 0.15), transparent 66%),
+        radial-gradient(36% 38% at 18% 90%, rgba(94, 92, 230, 0.11), transparent 62%);
+      filter: blur(18px) saturate(120%);
+      animation: ambientDrift 28s ease-in-out infinite alternate;
+    }
+
+    body.light-theme::before {
+      background:
+        radial-gradient(38% 40% at 12% 4%, rgba(255, 55, 95, 0.10), transparent 64%),
+        radial-gradient(40% 36% at 86% 10%, rgba(48, 209, 88, 0.10), transparent 62%),
+        radial-gradient(46% 44% at 78% 94%, rgba(10, 132, 255, 0.10), transparent 66%),
+        radial-gradient(38% 40% at 18% 92%, rgba(94, 92, 230, 0.08), transparent 62%);
+    }
+
+    @keyframes ambientDrift {
+      0%   { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(2.4%, -1.8%, 0) scale(1.05); }
+    }
+
+    body > * { position: relative; z-index: 1; }
+
     aside {
-      background-color: var(--bg-sidebar) !important;
+      background: linear-gradient(180deg, rgba(17, 17, 19, 0.84), rgba(8, 8, 10, 0.78)) !important;
       border-color: var(--border-color) !important;
+      backdrop-filter: blur(30px) saturate(150%);
+      -webkit-backdrop-filter: blur(30px) saturate(150%);
+      box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04), 24px 0 60px -50px #000;
+    }
+
+    body.light-theme aside {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(242, 242, 247, 0.76)) !important;
+      box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.05);
     }
 
     .card-apple {
-      background-color: var(--bg-card) !important;
+      position: relative;
+      isolation: isolate;
+      background: linear-gradient(165deg, rgba(34, 34, 38, 0.72) 0%, rgba(17, 17, 19, 0.58) 56%, rgba(10, 10, 12, 0.68) 100%) !important;
       border-color: var(--border-color) !important;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
+      backdrop-filter: blur(26px) saturate(160%);
+      -webkit-backdrop-filter: blur(26px) saturate(160%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+        0 20px 48px -26px rgba(0, 0, 0, 0.9);
+      transition:
+        transform 0.46s var(--spring),
+        border-color 0.3s ease,
+        box-shadow 0.46s ease,
+        background-color 0.3s ease;
     }
+
+    .card-apple::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(130% 92% at 8% 0%, rgba(255, 255, 255, 0.10), transparent 46%);
+      opacity: 0.85;
+      mix-blend-mode: screen;
+    }
+
+    body.light-theme .card-apple {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.62)) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 20px 44px -30px rgba(0, 0, 0, 0.35);
+    }
+
+    body.light-theme .card-apple::before {
+      background: radial-gradient(130% 92% at 8% 0%, rgba(255, 255, 255, 0.9), transparent 46%);
+      opacity: 0.45;
+    }
+
+    .accent-glow::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 130% at 92% 6%, rgba(255, 214, 10, 0.14), transparent 46%),
+        radial-gradient(120% 130% at 4% 100%, rgba(48, 209, 88, 0.16), transparent 52%);
+    }
+
+    #last-sync:hover { transform: none !important; }
+    #sidebar .sidebar-footer .card-apple:hover { transform: none !important; }
+    .theme-moon { display: none; }
+    body.light-theme .theme-sun { display: none; }
+    body.light-theme .theme-moon { display: block; }
+
+    @media (hover: hover) {
+      .card-apple:hover {
+        transform: translateY(-2px) scale(1.006);
+        border-color: rgba(255, 255, 255, 0.16) !important;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.10),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.42),
+          0 30px 64px -30px rgba(0, 0, 0, 0.95);
+      }
+    }
+
+    .card-apple:active {
+      transform: translateY(0) scale(0.997);
+      transition-duration: 0.14s;
+    }
+
+    .nav-item {
+      position: relative;
+      color: rgba(245, 245, 247, 0.58) !important;
+      border: 1px solid transparent;
+      background: transparent;
+      transition:
+        background 0.26s var(--ease-out),
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.3s var(--spring);
+    }
+
+    body.light-theme .nav-item { color: rgba(28, 28, 30, 0.56) !important; }
+    body.light-theme .nav-item:hover { color: var(--text-main) !important; }
+    body.light-theme .nav-item.active {
+      color: #000000 !important;
+      background: linear-gradient(100deg, rgba(0, 0, 0, 0.075), rgba(0, 0, 0, 0.025)) !important;
+      border-color: rgba(0, 0, 0, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 10px 24px -20px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-item:hover {
+      background: var(--nav-hover-bg) !important;
+      color: var(--text-main) !important;
+    }
+
+    .nav-item:active { transform: scale(0.975); }
 
     .nav-item.active {
-      background: var(--nav-active-bg) !important;
-      color: var(--text-main) !important;
-      font-weight: 700;
-      border-left: 3px solid #34D399;
+      background: linear-gradient(100deg, rgba(255, 255, 255, 0.115), rgba(255, 255, 255, 0.035)) !important;
+      border-color: rgba(255, 255, 255, 0.10);
+      color: #FFFFFF !important;
+      font-weight: 600;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 26px -18px #000;
     }
 
-    .mobile-nav-item.active {
-      color: #34D399 !important;
-      transform: scale(1.1);
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(150, 150, 150, 0.25);
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(150, 150, 150, 0.45);
-    }
-
-    body:not(.light-theme) #studies-frame,
-    body:not(.light-theme) #graduation-frame {
-      filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95);
-    }
-    body.light-theme #studies-frame,
-    body.light-theme #graduation-frame {
-      filter: none;
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: 24%;
+      bottom: 24%;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--apple-red), var(--apple-yellow), var(--apple-green));
+      box-shadow: 0 0 12px rgba(48, 209, 88, 0.55);
     }
 
     #sidebar.collapsed {
@@ -111,9 +245,7 @@
       padding-left: 0.35rem !important;
       padding-right: 0.35rem !important;
     }
-    #sidebar.collapsed .sidebar-text {
-      display: none !important;
-    }
+    #sidebar.collapsed .sidebar-text { display: none !important; }
     #sidebar.collapsed .nav-item {
       justify-content: center !important;
       padding-left: 0 !important;
@@ -121,68 +253,356 @@
       border-left: none !important;
       border-radius: 0.75rem !important;
     }
-    #sidebar.collapsed .sidebar-header {
-      justify-content: center !important;
-      padding: 0 !important;
-    }
+    #sidebar.collapsed .nav-item.active::before { display: none; }
+    #sidebar.collapsed .sidebar-header { justify-content: center !important; padding: 0 !important; }
     #sidebar.collapsed .sidebar-footer {
       justify-content: center !important;
       flex-direction: column !important;
       padding: 0 !important;
     }
-    #sidebar.collapsed #toggle-icon {
-      transform: rotate(180deg);
+    #sidebar.collapsed #toggle-icon { transform: rotate(180deg); }
+
+    .mobile-nav-item {
+      position: relative;
+      color: rgba(245, 245, 247, 0.5);
+      border-radius: 1rem;
+      transition: color 0.2s ease, transform 0.32s var(--spring), background 0.25s ease;
+    }
+    .mobile-nav-item:active { transform: scale(0.92); }
+    .mobile-nav-item.active {
+      color: var(--apple-green) !important;
+      background: rgba(48, 209, 88, 0.10);
+      transform: translateY(-1px) scale(1.04);
+    }
+    body.light-theme .mobile-nav-item { color: rgba(28, 28, 30, 0.5); }
+    body.light-theme .mobile-nav-item.active { color: #1B8F3A !important; }
+    .mobile-tab-bar {
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+      background: rgba(15, 15, 17, 0.72) !important;
+      backdrop-filter: blur(28px) saturate(170%);
+      -webkit-backdrop-filter: blur(28px) saturate(170%);
+      box-shadow: 0 -18px 44px -26px #000, inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    body.light-theme .mobile-tab-bar {
+      background: rgba(255, 255, 255, 0.78) !important;
+      box-shadow: 0 -18px 40px -30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .activity-icon {
+      color: var(--text-main);
+      opacity: 0.9;
     }
 
     .ring-circle {
-      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: stroke-dashoffset 1.15s var(--spring);
+      will-change: stroke-dashoffset;
+    }
+    .ring-svg {
+      animation: ringBreathe 7s ease-in-out infinite;
+      transform-origin: 50% 50%;
+      filter: drop-shadow(0 0 16px rgba(0, 0, 0, 0.55));
+    }
+    #ring-cal-progress { filter: drop-shadow(0 0 5px rgba(255, 55, 95, 0.55)); }
+    #ring-step-progress { filter: drop-shadow(0 0 5px rgba(48, 209, 88, 0.5)); }
+    #ring-sleep-progress { filter: drop-shadow(0 0 5px rgba(10, 132, 255, 0.5)); }
+    @keyframes ringBreathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.012); }
     }
 
-    .mobile-tab-bar {
-      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    .ring-stat {
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
-    /* Protege o topo contra o notch/câmera do iPhone */
-.safe-top {
-  padding-top: max(1rem, env(safe-area-inset-top));
-}	
-	
+    .ring-stat:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .metric-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .segmented {
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    input, select, textarea {
+      color: var(--text-main);
+      background: var(--input-bg) !important;
+      border-color: var(--border-color) !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    input[type="checkbox"] { accent-color: var(--apple-green); }
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(48, 209, 88, 0.55) !important;
+      box-shadow: 0 0 0 3px rgba(48, 209, 88, 0.14);
+      background: rgba(255, 255, 255, 0.06) !important;
+      outline: none;
+    }
+    input::placeholder { color: rgba(245, 245, 247, 0.30); }
+    select option { background: #111113; color: #F5F5F7; }
+    body.light-theme select option { background: #FFFFFF; color: #1C1C1E; }
+
+    button, a { -webkit-user-select: none; user-select: none; }
+    button:not(.nav-item):not(.pin-key):not(.mobile-nav-item):active { transform: scale(0.972); }
+    button { transition: transform 0.3s var(--spring), background 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(150, 150, 150, 0.22);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.4); }
+
+    body:not(.light-theme) #studies-frame,
+    body:not(.light-theme) #graduation-frame {
+      filter: invert(0.92) hue-rotate(180deg) brightness(0.95) contrast(0.95);
+    }
+    body.light-theme #studies-frame,
+    body.light-theme #graduation-frame { filter: none; }
+
+    /* Entradas: deceleram de baixo com leve overshoot, sem fade puro */
+    @keyframes riseIn {
+      0%   { opacity: 0; transform: translate3d(0, 16px, 0) scale(0.985); filter: blur(7px); }
+      62%  { opacity: 1; filter: blur(0); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0); }
+    }
+    @keyframes tabIn {
+      0%   { opacity: 0; transform: translate3d(0, 10px, 0) scale(0.995); }
+      100% { opacity: 1; transform: none; }
+    }
+    #tab-content-health:not(.hidden) > div,
+    #tab-content-raffle:not(.hidden) > div,
+    #tab-content-finance:not(.hidden) > div {
+      animation: tabIn 0.5s var(--ease-out) both;
+    }
+    #tab-content-health:not(.hidden) > div > *,
+    #tab-content-raffle:not(.hidden) > div > *,
+    #tab-content-finance:not(.hidden) > div > * {
+      animation: riseIn 0.62s var(--spring) both;
+    }
+    #tab-content-health:not(.hidden) > div > *:nth-child(1),
+    #tab-content-raffle:not(.hidden) > div > *:nth-child(1),
+    #tab-content-finance:not(.hidden) > div > *:nth-child(1) { animation-delay: 0.02s; }
+    #tab-content-health:not(.hidden) > div > *:nth-child(2),
+    #tab-content-raffle:not(.hidden) > div > *:nth-child(2),
+    #tab-content-finance:not(.hidden) > div > *:nth-child(2) { animation-delay: 0.06s; }
+    #tab-content-health:not(.hidden) > div > *:nth-child(3),
+    #tab-content-raffle:not(.hidden) > div > *:nth-child(3),
+    #tab-content-finance:not(.hidden) > div > *:nth-child(3) { animation-delay: 0.10s; }
+    #tab-content-health:not(.hidden) > div > *:nth-child(4),
+    #tab-content-raffle:not(.hidden) > div > *:nth-child(4),
+    #tab-content-finance:not(.hidden) > div > *:nth-child(4) { animation-delay: 0.14s; }
+    #tab-content-health:not(.hidden) > div > *:nth-child(5),
+    #tab-content-raffle:not(.hidden) > div > *:nth-child(5),
+    #tab-content-finance:not(.hidden) > div > *:nth-child(5) { animation-delay: 0.18s; }
+    #tab-content-health:not(.hidden) > div > *:nth-child(n+6),
+    #tab-content-raffle:not(.hidden) > div > *:nth-child(n+6),
+    #tab-content-finance:not(.hidden) > div > *:nth-child(n+6) { animation-delay: 0.22s; }
+
+    #lockscreen {
+      background:
+        radial-gradient(42% 40% at 22% 16%, rgba(255, 55, 95, 0.14), transparent 66%),
+        radial-gradient(42% 40% at 80% 20%, rgba(48, 209, 88, 0.10), transparent 62%),
+        radial-gradient(50% 46% at 70% 90%, rgba(10, 132, 255, 0.14), transparent 66%),
+        #000 !important;
+      backdrop-filter: blur(8px);
+    }
+
+    #lockscreen .pin-shell {
+      border-radius: 2rem;
+      padding: 1.75rem 1.5rem 1.5rem;
+      background: linear-gradient(165deg, rgba(32, 32, 36, 0.66), rgba(10, 10, 12, 0.72));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.09),
+        0 40px 80px -40px #000;
+      backdrop-filter: blur(30px) saturate(150%);
+      -webkit-backdrop-filter: blur(30px) saturate(150%);
+      animation: riseIn 0.7s var(--spring) both;
+    }
+
+    .pin-logo {
+      width: 3.5rem;
+      height: 3.5rem;
+      margin: 0 auto 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.15rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .pin-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 245, 247, 0.32);
+      background: transparent;
+      transition: transform 0.3s var(--spring), background 0.2s ease, border-color 0.2s ease, box-shadow 0.3s ease;
+    }
+    .pin-dot.filled {
+      background: #FFFFFF;
+      border-color: #FFFFFF;
+      transform: scale(1.14);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.55);
+    }
+
+    .pin-key {
+      height: 4rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(255, 255, 255, 0.075);
+      color: #F5F5F7;
+      font-size: 1.35rem;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      transition: transform 0.28s var(--spring), background 0.18s ease, border-color 0.18s ease;
+    }
+    .pin-key:hover { background: rgba(255, 255, 255, 0.09); }
+    .pin-key:active {
+      transform: scale(0.91);
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .pin-key-ghost {
+      background: transparent;
+      border-color: transparent;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(245, 245, 247, 0.55);
+      box-shadow: none;
+    }
+
+    #day-modal { background: rgba(0, 0, 0, 0.62) !important; backdrop-filter: blur(18px) saturate(120%); }
+    #day-modal > div { animation: riseIn 0.5s var(--spring) both; }
+
+    #finance-list > div,
+    #raffle-buyers-list > div {
+      border-radius: 0.9rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      transition: background 0.22s ease;
+    }
+    #finance-list > div:hover,
+    #raffle-buyers-list > div:hover { background: rgba(255, 255, 255, 0.035); }
+    body.light-theme #finance-list > div:hover,
+    body.light-theme #raffle-buyers-list > div:hover { background: rgba(0, 0, 0, 0.03); }
+
+    #annual-calendar-grid > div { transition: transform 0.42s var(--spring), border-color 0.3s ease; }
+    @media (hover: hover) {
+      #annual-calendar-grid > div:hover { transform: translateY(-2px); border-color: rgba(255, 255, 255, 0.15) !important; }
+    }
+
+    /* Tipografia: sem caixa alta artificial, pesos Apple, números tabulares */
+    .uppercase { text-transform: none !important; letter-spacing: 0 !important; }
+    .tracking-wider, .tracking-widest { letter-spacing: 0 !important; }
+    .font-black { font-weight: 700 !important; letter-spacing: -0.032em; }
+    .font-bold { font-weight: 600 !important; }
+    h1, h2, h3, h4 { letter-spacing: -0.03em; }
+    #today-steps, #today-calories, #today-sleep, #ring-cal-text, #ring-step-text,
+    #ring-sleep-text, #chart-metric-value, #raffle-total-raised, #raffle-my-share,
+    #raffle-bonus-total, #raffle-euphoria-share, #raffle-total-final-abate,
+    #fin-balance, #fin-income, #fin-expense, #cd-days, #cd-hours, #cd-mins {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+    }
+
+    /* Cores Apple Fitness/SF sobre as utilitárias do Tailwind */
+    .text-rose-500, .text-rose-400 { color: var(--apple-red) !important; }
+    .text-emerald-500, .text-emerald-400 { color: var(--apple-green) !important; }
+    .text-orange-500, .text-orange-400 { color: var(--apple-orange) !important; }
+    .text-indigo-500, .text-indigo-400 { color: var(--apple-indigo) !important; }
+    .text-amber-400, .text-amber-500 { color: var(--apple-yellow) !important; }
+    .text-blue-400, .text-blue-500 { color: #64D2FF !important; }
+    .text-purple-400, .text-purple-500 { color: #BF5AF2 !important; }
+    .text-pink-400 { color: #FF6482 !important; }
+    .bg-rose-500 { background-color: var(--apple-red) !important; }
+    .bg-emerald-500 { background-color: var(--apple-green) !important; }
+    .bg-orange-500 { background-color: var(--apple-orange) !important; }
+    .bg-indigo-500 { background-color: var(--apple-indigo) !important; }
+    .bg-amber-400, .bg-amber-500 { background-color: var(--apple-yellow) !important; }
+
+    .safe-top { padding-top: max(1rem, env(safe-area-inset-top)); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
   </style>
 </head>
 <body class="h-full overflow-hidden">
 
   <!-- ================= TELA DE BLOQUEIO (PIN) ================= -->
   <div id="lockscreen" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-6">
-    <div class="w-full max-w-xs text-center space-y-5">
-      <div>
-        <div class="text-4xl mb-2">🔒</div>
-        <h2 class="text-xl font-bold text-white tracking-tight">Personal Hub</h2>
-        <p class="text-xs text-neutral-400 mt-1">Digite seu PIN de 4 dígitos</p>
+    <div class="pin-shell w-full max-w-xs text-center">
+      <div class="pin-logo">
+        <svg class="w-8 h-8 -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
+          <defs>
+            <linearGradient id="lock-move" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FF2D55"/><stop offset="100%" stop-color="#FF6482"/>
+            </linearGradient>
+            <linearGradient id="lock-steps" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0%" stop-color="#30D158"/><stop offset="100%" stop-color="#A0F0B8"/>
+            </linearGradient>
+            <linearGradient id="lock-sleep" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#0A84FF"/><stop offset="100%" stop-color="#5E5CE6"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="42" stroke="rgba(255,55,95,.18)" stroke-width="8" fill="none"/>
+          <circle cx="50" cy="50" r="42" stroke="url(#lock-move)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="263.9" stroke-dashoffset="66"/>
+          <circle cx="50" cy="50" r="31" stroke="rgba(48,209,88,.18)" stroke-width="8" fill="none"/>
+          <circle cx="50" cy="50" r="31" stroke="url(#lock-steps)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="194.8" stroke-dashoffset="58"/>
+          <circle cx="50" cy="50" r="20" stroke="rgba(10,132,255,.2)" stroke-width="8" fill="none"/>
+          <circle cx="50" cy="50" r="20" stroke="url(#lock-sleep)" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="125.7" stroke-dashoffset="44"/>
+        </svg>
       </div>
+      <h2 class="text-xl font-bold text-white tracking-tight">Personal Hub</h2>
+      <p class="text-xs text-neutral-400 mt-1">Digite seu PIN de 4 dígitos</p>
 
-      <div class="flex justify-center gap-4 py-1">
-        <div id="dot-0" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
-        <div id="dot-1" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
-        <div id="dot-2" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
-        <div id="dot-3" class="w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all"></div>
+      <div class="flex justify-center gap-4 py-4">
+        <div id="dot-0" class="pin-dot"></div>
+        <div id="dot-1" class="pin-dot"></div>
+        <div id="dot-2" class="pin-dot"></div>
+        <div id="dot-3" class="pin-dot"></div>
       </div>
       <p id="pin-error" class="text-xs text-rose-500 font-medium h-4"></p>
 
       <div class="grid grid-cols-3 gap-3 pt-1">
-        <button type="button" onclick="pressPin('1')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">1</button>
-        <button type="button" onclick="pressPin('2')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">2</button>
-        <button type="button" onclick="pressPin('3')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">3</button>
-        <button type="button" onclick="pressPin('4')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">4</button>
-        <button type="button" onclick="pressPin('5')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">5</button>
-        <button type="button" onclick="pressPin('6')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">6</button>
-        <button type="button" onclick="pressPin('7')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">7</button>
-        <button type="button" onclick="pressPin('8')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">8</button>
-        <button type="button" onclick="pressPin('9')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">9</button>
+        <button type="button" onclick="pressPin('1')" class="pin-key select-none">1</button>
+        <button type="button" onclick="pressPin('2')" class="pin-key select-none">2</button>
+        <button type="button" onclick="pressPin('3')" class="pin-key select-none">3</button>
+        <button type="button" onclick="pressPin('4')" class="pin-key select-none">4</button>
+        <button type="button" onclick="pressPin('5')" class="pin-key select-none">5</button>
+        <button type="button" onclick="pressPin('6')" class="pin-key select-none">6</button>
+        <button type="button" onclick="pressPin('7')" class="pin-key select-none">7</button>
+        <button type="button" onclick="pressPin('8')" class="pin-key select-none">8</button>
+        <button type="button" onclick="pressPin('9')" class="pin-key select-none">9</button>
         <div></div>
-        <button type="button" onclick="pressPin('0')" class="h-16 rounded-full bg-neutral-900 border border-neutral-800 text-xl font-medium active:bg-neutral-800 text-white select-none">0</button>
-        <button type="button" onclick="deletePin()" class="h-16 rounded-full flex items-center justify-center text-sm font-semibold text-neutral-400 active:text-white select-none">Apagar</button>
+        <button type="button" onclick="pressPin('0')" class="pin-key select-none">0</button>
+        <button type="button" onclick="deletePin()" class="pin-key pin-key-ghost select-none">Apagar</button>
       </div>
 
-      <div class="flex items-center justify-center gap-2 pt-2">
+      <div class="flex items-center justify-center gap-2 pt-4">
         <input type="checkbox" id="remember-pin" class="rounded bg-neutral-900 border-neutral-700 text-emerald-500 focus:ring-0">
         <label for="remember-pin" class="text-xs text-neutral-400 select-none cursor-pointer">Lembrar neste aparelho (30 dias)</label>
       </div>
@@ -197,10 +617,10 @@
       <div class="space-y-4">
         <div class="sidebar-header flex items-center justify-between px-1">
           <div class="sidebar-text overflow-hidden">
-            <h1 class="text-sm font-black tracking-tight leading-none">Hub OS</h1>
-            <p class="text-[10px] opacity-60 mt-0.5">Dashboard</p>
+            <h1 class="text-sm font-black tracking-tight leading-none">Personal Hub</h1>
+            <p class="text-[10px] opacity-50 mt-1">Painel pessoal</p>
           </div>
-          <button type="button" onclick="toggleSidebar()" title="Recolher/Expandir menu" class="flex items-center justify-center w-7 h-7 rounded-lg opacity-60 hover:opacity-100 transition">
+          <button type="button" onclick="toggleSidebar()" title="Recolher/Expandir menu" class="flex items-center justify-center w-7 h-7 rounded-lg opacity-50 hover:opacity-100 transition">
             <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
@@ -208,43 +628,64 @@
         </div>
 
         <nav class="space-y-1 flex flex-col">
-          <button id="nav-health" onclick="switchTab('health')" title="Saúde" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
+          <button id="nav-health" onclick="switchTab('health')" title="Saúde" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-left">
             <svg class="w-4 h-4 text-rose-500 shrink-0 fill-current" viewBox="0 0 24 24">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
             </svg>
             <span class="sidebar-text whitespace-nowrap">Saúde</span>
           </button>
 
-          <button id="nav-studies" onclick="switchTab('studies')" title="Estudos" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
-            <span class="text-sm shrink-0">📚</span>
+          <button id="nav-studies" onclick="switchTab('studies')" title="Estudos" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5V5.5Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/>
+            </svg>
             <span class="sidebar-text whitespace-nowrap">Estudos</span>
           </button>
 
-          <button id="nav-graduation" onclick="switchTab('graduation')" title="Formatura" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
-            <span class="text-sm shrink-0">🎓</span>
+          <button id="nav-graduation" onclick="switchTab('graduation')" title="Formatura" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 9.2 12 5l9 4.2-9 4.2-9-4.2Z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.3v4.1c0 1.6 2.2 2.9 5 2.9s5-1.3 5-2.9v-4.1"/>
+            </svg>
             <span class="sidebar-text whitespace-nowrap">Formatura</span>
           </button>
 
-          <button id="nav-raffle" onclick="switchTab('raffle')" title="Rifa" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
-            <span class="text-sm shrink-0">🎟️</span>
+          <button id="nav-raffle" onclick="switchTab('raffle')" title="Rifa" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 7.5A2.5 2.5 0 0 1 7 5h10a2.5 2.5 0 0 1 2.5 2.5 2 2 0 0 0 0 4 2.5 2.5 0 0 1 0 4A2.5 2.5 0 0 1 17 19H7a2.5 2.5 0 0 1-2.5-3.5 2 2 0 0 0 0-4Z"/>
+              <path stroke-linecap="round" d="M12 8v1.5M12 12v1.5M12 16v1.5"/>
+            </svg>
             <span class="sidebar-text whitespace-nowrap">Rifa</span>
           </button>
 
-          <button id="nav-finance" onclick="switchTab('finance')" title="Finanças" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition opacity-70 hover:opacity-100 text-left">
-            <span class="text-sm shrink-0">💰</span>
+          <button id="nav-finance" onclick="switchTab('finance')" title="Finanças" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-left">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+              <rect x="3" y="6" width="18" height="13" rx="3"/>
+              <path stroke-linecap="round" d="M3 10h18M16 14.5h2"/>
+            </svg>
             <span class="sidebar-text whitespace-nowrap">Finanças</span>
           </button>
         </nav>
       </div>
 
       <div class="sidebar-footer pt-3 border-t border-[var(--border-color)] flex flex-col gap-2">
-        <button type="button" onclick="toggleTheme()" id="theme-btn" title="Alternar Modo Claro/Escuro" class="flex items-center justify-center gap-1.5 text-xs card-apple border px-2.5 py-1.5 rounded-xl transition opacity-80 hover:opacity-100">
-          <span id="theme-icon">☀️</span>
+        <button type="button" onclick="toggleTheme()" id="theme-btn" title="Alternar Modo Claro/Escuro" class="flex items-center justify-center gap-1.5 text-xs card-apple border px-2.5 py-1.5 rounded-xl opacity-80 hover:opacity-100">
+          <svg class="theme-sun w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"/>
+            <path stroke-linecap="round" d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/>
+          </svg>
+          <svg class="theme-moon w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/>
+          </svg>
           <span id="theme-text" class="sidebar-text">Modo Claro</span>
         </button>
 
-        <button type="button" onclick="lockApp()" title="Bloquear tela" class="flex items-center justify-center gap-1.5 text-xs card-apple border px-2.5 py-1.5 rounded-xl transition opacity-80 hover:opacity-100">
-          <span class="text-xs">🔒</span> 
+        <button type="button" onclick="lockApp()" title="Bloquear tela" class="flex items-center justify-center gap-1.5 text-xs card-apple border px-2.5 py-1.5 rounded-xl opacity-80 hover:opacity-100">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+            <rect x="5" y="10" width="14" height="10" rx="3"/>
+            <path stroke-linecap="round" d="M8 10V7.5a4 4 0 0 1 8 0V10"/>
+          </svg>
           <span class="sidebar-text">Bloquear</span>
         </button>
       </div>
@@ -258,105 +699,138 @@
         <div class="max-w-5xl mx-auto p-4 sm:p-8 space-y-6 pb-28 md:pb-10">
           <header class="flex justify-between items-center border-b border-[var(--border-color)] pb-4">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center">
+              <div class="w-11 h-11 rounded-2xl bg-rose-500/10 border border-rose-500/15 flex items-center justify-center">
                 <svg class="w-5 h-5 text-rose-500 fill-current" viewBox="0 0 24 24">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
               </div>
               <div>
-                <h2 class="text-xl sm:text-2xl font-black tracking-tight">Apple Watch Health</h2>
-                <p class="text-xs opacity-60">Sincronizado automaticamente</p>
+                <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Apple Watch Health</h2>
+                <p class="text-xs opacity-50 mt-0.5">Sincronizado automaticamente</p>
               </div>
             </div>
-            <div id="last-sync" class="text-[11px] sm:text-xs opacity-75 card-apple border px-3 py-1.5 rounded-full text-right">
+            <div id="last-sync" class="text-[11px] sm:text-xs opacity-70 card-apple border px-3 py-1.5 rounded-full text-right">
               Sincronizando...
             </div>
           </header>
 
-          <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
-            <div class="flex items-center gap-5">
-              <div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
-                <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" stroke="rgba(244, 63, 94, 0.15)" stroke-width="8" fill="none"/>
-                  <circle id="ring-cal-progress" class="ring-circle" cx="50" cy="50" r="40" stroke="#f43f5e" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
-                  
-                  <circle cx="50" cy="50" r="28" stroke="rgba(16, 185, 129, 0.15)" stroke-width="8" fill="none"/>
-                  <circle id="ring-step-progress" class="ring-circle" cx="50" cy="50" r="28" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none" stroke-dasharray="175.9" stroke-dashoffset="175.9"/>
+          <div class="card-apple rounded-3xl p-5 sm:p-6 border flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex flex-col sm:flex-row items-center sm:items-center gap-5 text-center sm:text-left">
+              <div class="relative w-32 h-32 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center">
+                <svg class="ring-svg w-full h-full -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="grad-move" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#FF2D55"/><stop offset="100%" stop-color="#FF6482"/>
+                    </linearGradient>
+                    <linearGradient id="grad-steps" x1="0" y1="1" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#30D158"/><stop offset="100%" stop-color="#A0F0B8"/>
+                    </linearGradient>
+                    <linearGradient id="grad-sleep" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#0A84FF"/><stop offset="100%" stop-color="#5E5CE6"/>
+                    </linearGradient>
+                  </defs>
+                  <circle cx="50" cy="50" r="42" stroke="rgba(255, 55, 95, 0.16)" stroke-width="7" fill="none"/>
+                  <circle id="ring-cal-progress" class="ring-circle" cx="50" cy="50" r="42" stroke="url(#grad-move)" stroke-width="7" stroke-linecap="round" fill="none" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+                  <circle cx="50" cy="50" r="31" stroke="rgba(48, 209, 88, 0.16)" stroke-width="7" fill="none"/>
+                  <circle id="ring-step-progress" class="ring-circle" cx="50" cy="50" r="31" stroke="url(#grad-steps)" stroke-width="7" stroke-linecap="round" fill="none" stroke-dasharray="194.8" stroke-dashoffset="194.8"/>
+                  <circle cx="50" cy="50" r="20" stroke="rgba(10, 132, 255, 0.18)" stroke-width="7" fill="none"/>
+                  <circle id="ring-sleep-progress" class="ring-circle" cx="50" cy="50" r="20" stroke="url(#grad-sleep)" stroke-width="7" stroke-linecap="round" fill="none" stroke-dasharray="125.7" stroke-dashoffset="125.7"/>
                 </svg>
-                <span class="absolute text-xl"></span>
+                <svg class="activity-icon absolute w-6 h-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
               </div>
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Atividade Diária</span>
-                <h3 class="text-lg font-black mt-0.5">Metas de Movimento</h3>
-                <p class="text-xs opacity-60 mt-0.5">Círculos de saúde sincronizados com o Watch</p>
+                <span class="text-[11px] font-semibold text-rose-500">Atividade diária</span>
+                <h3 class="text-lg sm:text-xl font-bold mt-1 tracking-tight">Metas de movimento</h3>
+                <p class="text-xs opacity-50 mt-1 max-w-[16rem]">Movimento, passos e sono sincronizados com o Apple Watch.</p>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 w-full sm:w-auto">
-              <div class="p-3 rounded-2xl bg-neutral-500/5 border border-[var(--border-color)]">
-                <div class="flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                  <span class="text-xs font-bold opacity-70">Calorias</span>
+            <div class="grid grid-cols-3 sm:grid-cols-1 gap-2 w-full sm:w-auto sm:min-w-[9.5rem]">
+              <div class="ring-stat rounded-2xl px-3.5 py-2.5">
+                <div class="flex items-center gap-1.5 text-[10px] font-semibold opacity-60">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>Calorias
                 </div>
-                <div id="ring-cal-text" class="text-base font-black mt-1">0%</div>
+                <div id="ring-cal-text" class="text-lg font-bold mt-0.5">0%</div>
               </div>
-              <div class="p-3 rounded-2xl bg-neutral-500/5 border border-[var(--border-color)]">
-                <div class="flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                  <span class="text-xs font-bold opacity-70">Passos</span>
+              <div class="ring-stat rounded-2xl px-3.5 py-2.5">
+                <div class="flex items-center gap-1.5 text-[10px] font-semibold opacity-60">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>Passos
                 </div>
-                <div id="ring-step-text" class="text-base font-black mt-1">0%</div>
+                <div id="ring-step-text" class="text-lg font-bold mt-0.5">0%</div>
+              </div>
+              <div class="ring-stat rounded-2xl px-3.5 py-2.5">
+                <div class="flex items-center gap-1.5 text-[10px] font-semibold opacity-60">
+                  <span class="w-2 h-2 rounded-full" style="background:#0A84FF"></span>Sono
+                </div>
+                <div id="ring-sleep-text" class="text-lg font-bold mt-0.5">0%</div>
               </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="card-apple rounded-2xl p-5 flex flex-col justify-between border">
-              <div class="flex items-center justify-between opacity-70 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Passos</span>
-                <span class="text-base">👟</span>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-emerald-500">Passos</span>
+                <span class="metric-icon text-emerald-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                    <ellipse cx="8" cy="8.5" rx="2.2" ry="3.4"/>
+                    <ellipse cx="16" cy="15.5" rx="2.2" ry="3.4"/>
+                  </svg>
+                </span>
               </div>
-              <div id="today-steps" class="text-3xl font-black">--</div>
-              <div class="mt-3">
+              <div id="today-steps" class="text-[2rem] leading-none font-bold">--</div>
+              <div class="mt-4">
                 <div class="w-full bg-neutral-500/20 rounded-full h-1.5 overflow-hidden">
-                  <div id="steps-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                  <div id="steps-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-700" style="width: 0%"></div>
                 </div>
-                <p id="steps-meta" class="text-[11px] opacity-60 mt-1.5">Meta: 10.000</p>
+                <p id="steps-meta" class="text-[11px] opacity-50 mt-2">Meta: 10.000</p>
               </div>
             </div>
 
             <div class="card-apple rounded-2xl p-5 flex flex-col justify-between border">
-              <div class="flex items-center justify-between opacity-70 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-orange-500">Calorias Ativas</span>
-                <span class="text-base">🔥</span>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-orange-500">Calorias ativas</span>
+                <span class="metric-icon text-orange-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.4 3.2-2.6 4.3-2.6 7.2a2.6 2.6 0 0 0 5.2 0C14.6 8 12.4 6.8 12 3Z"/>
+                    <path stroke-linecap="round" d="M12 20.5a5.8 5.8 0 0 0 5.8-5.8c0-2.4-1.4-4.3-3.2-5.7"/>
+                    <path stroke-linecap="round" d="M12 20.5a5.8 5.8 0 0 1-5.8-5.8c0-2.4 1.4-4.3 3.2-5.7"/>
+                  </svg>
+                </span>
               </div>
-              <div id="today-calories" class="text-3xl font-black">-- <span class="text-sm font-normal opacity-60">kcal</span></div>
-              <p class="text-[11px] opacity-60 mt-3">Gasto do dia</p>
+              <div id="today-calories" class="text-[2rem] leading-none font-bold">-- <span class="text-sm font-normal opacity-50">kcal</span></div>
+              <p class="text-[11px] opacity-50 mt-4">Gasto do dia</p>
             </div>
 
             <div class="card-apple rounded-2xl p-5 flex flex-col justify-between border">
-              <div class="flex items-center justify-between opacity-70 mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-indigo-500">Sono</span>
-                <span class="text-base">🌙</span>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-indigo-500">Sono</span>
+                <span class="metric-icon text-indigo-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/>
+                  </svg>
+                </span>
               </div>
-              <div id="today-sleep" class="text-3xl font-black">-- <span class="text-sm font-normal opacity-60">h</span></div>
-              <p class="text-[11px] opacity-60 mt-3">Última noite monitorada</p>
+              <div id="today-sleep" class="text-[2rem] leading-none font-bold">-- <span class="text-sm font-normal opacity-50">h</span></div>
+              <p class="text-[11px] opacity-50 mt-4">Última noite monitorada</p>
             </div>
           </div>
 
           <div class="card-apple rounded-3xl p-5 sm:p-6 space-y-4 border">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[var(--border-color)] pb-4">
               <div>
-                <span id="chart-metric-label" class="text-xs font-semibold uppercase tracking-wider opacity-60">Média diária</span>
-                <div class="flex items-baseline gap-2 mt-0.5">
-                  <span id="chart-metric-value" class="text-2xl sm:text-3xl font-black">--</span>
-                  <span id="chart-metric-unit" class="text-xs opacity-60 font-medium"></span>
+                <span id="chart-metric-label" class="text-xs font-semibold opacity-50">Média diária</span>
+                <div class="flex items-baseline gap-2 mt-1">
+                  <span id="chart-metric-value" class="text-2xl sm:text-3xl font-bold">--</span>
+                  <span id="chart-metric-unit" class="text-xs opacity-50 font-medium"></span>
                 </div>
               </div>
-              <div class="card-apple border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
-                <button id="btn-tab-steps" onclick="setChartMetric('steps')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500">👟 Passos</button>
-                <button id="btn-tab-calories" onclick="setChartMetric('calories')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100">🔥 Calorias</button>
-                <button id="btn-tab-sleep" onclick="setChartMetric('sleep')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100">🌙 Sono</button>
+              <div class="segmented border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
+                <button id="btn-tab-steps" onclick="setChartMetric('steps')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500">Passos</button>
+                <button id="btn-tab-calories" onclick="setChartMetric('calories')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100">Calorias</button>
+                <button id="btn-tab-sleep" onclick="setChartMetric('sleep')" class="flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100">Sono</button>
               </div>
             </div>
             <div class="relative h-64 sm:h-72 w-full pt-1">
@@ -392,17 +866,17 @@
           
          <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
   <div>
-    <h2 class="text-xl sm:text-2xl font-black tracking-tight">Painel da Rifa 🎓</h2>
-    <p class="text-xs opacity-60">Amortização direta no boleto da formatura (com bonificação oficial de R$ 25 a cada 50 cotas)</p>
+    <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Painel da Rifa</h2>
+    <p class="text-xs opacity-50">Amortização direta no boleto da formatura, com bonificação de R$ 25 a cada 50 cotas</p>
   </div>
   <div class="flex items-center gap-2">
     <!-- Link Direto para o Arrecadaê -->
     <a href="https://www.arrecadae.com.br/evento/aea26.2" target="_blank" rel="noopener"
-       class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 transition">
-      <span>🎟️</span> <span>Comprar no Arrecadaê ↗</span>
+       class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5">
+      <span>Comprar no Arrecadaê ↗</span>
     </a>
-    <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5 transition">
-      <span>🔄</span> <span>Atualizar Dados</span>
+    <button onclick="loadRaffleData()" class="card-apple border px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center gap-1.5">
+      <span>Atualizar</span>
     </button>
   </div>
 </header>
@@ -410,28 +884,28 @@
           <!-- Banner Contagem Regressiva para o Sorteio -->
           <div class="card-apple rounded-3xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
             <div>
-              <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Sorteio Oficial [1]</span>
-              <h3 class="text-lg font-black mt-0.5">08 de Dezembro de 2026 às 11:00 [1]</h3>
-              <p class="text-xs opacity-60 mt-0.5">Ao vivo no Instagram <strong class="text-pink-400">@euphoria.formaturas</strong> e YouTube [1]</p>
+              <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Sorteio Oficial</span>
+              <h3 class="text-lg font-black mt-0.5">08 de Dezembro de 2026 às 11:00</h3>
+              <p class="text-xs opacity-60 mt-0.5">Ao vivo no Instagram <strong class="text-pink-400">@euphoria.formaturas</strong> e YouTube</p>
             </div>
             <div id="raffle-countdown" class="flex items-center gap-2 text-center">
-              <div class="p-2.5 rounded-xl bg-neutral-500/10 border border-[var(--border-color)] min-w-[50px]">
-                <span id="cd-days" class="text-lg font-black block">--</span>
-                <span class="text-[9px] uppercase opacity-60">Dias</span>
+              <div class="ring-stat p-2.5 rounded-xl min-w-[52px]">
+                <span id="cd-days" class="text-lg font-bold block">--</span>
+                <span class="text-[9px] opacity-50">Dias</span>
               </div>
-              <div class="p-2.5 rounded-xl bg-neutral-500/10 border border-[var(--border-color)] min-w-[50px]">
-                <span id="cd-hours" class="text-lg font-black block">--</span>
-                <span class="text-[9px] uppercase opacity-60">Horas</span>
+              <div class="ring-stat p-2.5 rounded-xl min-w-[52px]">
+                <span id="cd-hours" class="text-lg font-bold block">--</span>
+                <span class="text-[9px] opacity-50">Horas</span>
               </div>
-              <div class="p-2.5 rounded-xl bg-neutral-500/10 border border-[var(--border-color)] min-w-[50px]">
-                <span id="cd-mins" class="text-lg font-black block">--</span>
-                <span class="text-[9px] uppercase opacity-60">Min</span>
+              <div class="ring-stat p-2.5 rounded-xl min-w-[52px]">
+                <span id="cd-mins" class="text-lg font-bold block">--</span>
+                <span class="text-[9px] opacity-50">Min</span>
               </div>
             </div>
           </div>
 
           <!-- NOVO: Card de Destaque da Bonificação Oficial -->
-          <div class="card-apple rounded-3xl p-5 sm:p-6 border bg-gradient-to-br from-emerald-500/10 via-transparent to-amber-500/10 space-y-4 shadow-xl">
+          <div class="card-apple accent-glow rounded-3xl p-5 sm:p-6 border space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
                 <div class="flex items-center gap-2">
@@ -463,7 +937,7 @@
             <div class="card-apple rounded-2xl p-5 border">
               <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Total Arrecadado</span>
               <div id="raffle-total-raised" class="text-2xl font-black mt-1">R$ 0,00</div>
-              <p class="text-[11px] opacity-60 mt-1">Venda bruta (R$ 10/cota) [1]</p>
+              <p class="text-[11px] opacity-60 mt-1">Venda bruta (R$ 10/cota)</p>
             </div>
 
             <!-- 2. Arrecadação por Número (R$ 4,35/cota) -->
@@ -494,9 +968,9 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
                 <h3 class="text-sm font-bold">Compradores & Envio de Números</h3>
-                <p class="text-xs opacity-60">Cole os números da sorte e envie no WhatsApp com mensagem pronta [1]</p>
+                <p class="text-xs opacity-60">Cole os números da sorte e envie no WhatsApp com mensagem pronta</p>
               </div>
-              <input type="text" id="raffle-search" oninput="renderRaffleBuyers()" placeholder="🔍 Buscar comprador..." 
+              <input type="text" id="raffle-search" oninput="renderRaffleBuyers()" placeholder="Buscar comprador..."
                      class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-neutral-500 w-full sm:w-56">
             </div>
 
@@ -514,29 +988,29 @@
           
           <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-[var(--border-color)] pb-4">
             <div>
-              <h2 class="text-xl sm:text-2xl font-black tracking-tight">Controle Financeiro</h2>
-              <p class="text-xs opacity-60">Supabase Database</p>
+              <h2 class="text-xl sm:text-2xl font-bold tracking-tight">Controle Financeiro</h2>
+              <p class="text-xs opacity-50">Saldo, entradas e saídas do período</p>
             </div>
-            <div class="card-apple border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
+            <div class="segmented border p-1 rounded-xl flex items-center gap-1 w-full sm:w-auto">
               <button id="btn-view-list" onclick="setFinanceView('list')" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-500 transition">
-                📋 Transações
+                Transações
               </button>
               <button id="btn-view-calendar" onclick="setFinanceView('calendar')" class="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg text-xs font-bold opacity-60 hover:opacity-100 transition">
-                📅 Calendário Anual
+                Calendário anual
               </button>
             </div>
           </header>
 
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <div class="card-apple border p-1 rounded-xl flex items-center gap-1 text-xs">
-              <span class="opacity-60 px-2 font-medium">Balanço:</span>
+            <div class="segmented border p-1 rounded-xl flex items-center gap-1 text-xs">
+              <span class="opacity-50 px-2 font-medium">Balanço</span>
               <button id="btn-period-month" onclick="setFinancePeriod('month')" class="px-2.5 py-1 rounded-lg font-bold bg-emerald-500/10 text-emerald-500 transition">Este Mês</button>
               <button id="btn-period-year" onclick="setFinancePeriod('year')" class="px-2.5 py-1 rounded-lg opacity-60 hover:opacity-100 transition">Este Ano</button>
               <button id="btn-period-all" onclick="setFinancePeriod('all')" class="px-2.5 py-1 rounded-lg opacity-60 hover:opacity-100 transition">Tudo</button>
             </div>
 
             <button onclick="exportToCSV()" class="card-apple border hover:bg-white/5 text-xs font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
-              <span>📥</span> <span>Exportar Backup (CSV)</span>
+              <span>Exportar CSV</span>
             </button>
           </div>
 
@@ -548,7 +1022,7 @@
                 <h4 id="budget-summary-text" class="text-sm font-bold mt-0.5">R$ 0,00 de R$ 3.000,00 gastos</h4>
               </div>
               <button onclick="changeMonthlyBudget()" class="text-xs card-apple border px-2.5 py-1.5 rounded-lg opacity-75 hover:opacity-100 transition flex items-center gap-1">
-                <span>⚙️</span> <span>Ajustar Meta</span>
+                <span>Ajustar meta</span>
               </button>
             </div>
             
@@ -613,8 +1087,8 @@
                      class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
 
               <select id="tx-type" onchange="updateCategoryOptions()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500">
-                <option value="expense">🔴 Despesa</option>
-                <option value="income">🟢 Receita</option>
+                <option value="expense">Despesa</option>
+                <option value="income">Receita</option>
               </select>
 
               <select id="tx-category" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-neutral-500"></select>
@@ -633,13 +1107,13 @@
               <h3 class="text-sm font-bold">Histórico de Transações</h3>
               
               <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                <input type="text" id="search-tx" oninput="renderFilteredFinanceList()" placeholder="🔍 Buscar lançamento..." 
+                <input type="text" id="search-tx" oninput="renderFilteredFinanceList()" placeholder="Buscar lançamento..."
                        class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-neutral-500 w-full sm:w-44">
                 
                 <select id="filter-category" onchange="renderFilteredFinanceList()" class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-2.5 py-1.5 text-xs focus:outline-none">
                   <option value="ALL">Todas categorias</option>
                 </select>
-                <button onclick="loadFinanceData()" title="Recarregar" class="text-xs opacity-60 hover:opacity-100 p-1.5 card-apple border rounded-lg">🔄</button>
+                <button onclick="loadFinanceData()" title="Recarregar" class="text-xs opacity-60 hover:opacity-100 p-1.5 card-apple border rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg></button>
               </div>
             </div>
 
@@ -652,10 +1126,10 @@
           <div id="finance-view-calendar" class="hidden space-y-4">
             <div class="card-apple rounded-2xl p-4 border flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <span class="text-lg">📅</span>
+                <span class="w-9 h-9 rounded-xl bg-white/5 border border-[var(--border-color)] flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path stroke-linecap="round" d="M3.5 10h17M8 3.5v3M16 3.5v3"/></svg></span>
                 <div>
                   <h3 class="text-sm font-bold">Calendário Anual de Lançamentos</h3>
-                  <p class="text-[11px] opacity-60">🔴 Despesa • 🟢 Entrada (Clique no dia para detalhes)</p>
+                  <p class="text-[11px] opacity-60 flex items-center gap-2"><span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Despesa</span><span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Entrada</span><span class="opacity-50">Clique no dia para detalhes</span></p>
                 </div>
               </div>
               <div class="flex items-center gap-2">
@@ -674,31 +1148,43 @@
     </main>
 
     <!-- TAB BAR INFERIOR MOBILE -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-card)]/90 backdrop-blur-lg border-t border-[var(--border-color)] flex items-center justify-around py-2 mobile-tab-bar shadow-2xl">
-      <button onclick="switchTab('health')" id="mobile-nav-health" class="mobile-nav-item active flex flex-col items-center justify-center p-1.5 transition">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border-color)] flex items-center justify-around py-2 mobile-tab-bar">
+      <button onclick="switchTab('health')" id="mobile-nav-health" class="mobile-nav-item active flex flex-col items-center justify-center px-3 py-1.5">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
         </svg>
         <span class="text-[9px] font-bold mt-0.5">Saúde</span>
       </button>
 
-      <button onclick="switchTab('studies')" id="mobile-nav-studies" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-base leading-none">📚</span>
+      <button onclick="switchTab('studies')" id="mobile-nav-studies" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center px-3 py-1.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5V5.5Z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/>
+        </svg>
         <span class="text-[9px] font-bold mt-0.5">Estudos</span>
       </button>
 
-      <button onclick="switchTab('graduation')" id="mobile-nav-graduation" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-base leading-none">🎓</span>
+      <button onclick="switchTab('graduation')" id="mobile-nav-graduation" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center px-3 py-1.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 9.2 12 5l9 4.2-9 4.2-9-4.2Z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.3v4.1c0 1.6 2.2 2.9 5 2.9s5-1.3 5-2.9v-4.1"/>
+        </svg>
         <span class="text-[9px] font-bold mt-0.5">Formatura</span>
       </button>
 
-      <button onclick="switchTab('raffle')" id="mobile-nav-raffle" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-base leading-none">🎟️</span>
+      <button onclick="switchTab('raffle')" id="mobile-nav-raffle" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center px-3 py-1.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 7.5A2.5 2.5 0 0 1 7 5h10a2.5 2.5 0 0 1 2.5 2.5 2 2 0 0 0 0 4 2.5 2.5 0 0 1 0 4A2.5 2.5 0 0 1 17 19H7a2.5 2.5 0 0 1-2.5-3.5 2 2 0 0 0 0-4Z"/>
+          <path stroke-linecap="round" d="M12 8v1.5M12 12v1.5M12 16v1.5"/>
+        </svg>
         <span class="text-[9px] font-bold mt-0.5">Rifa</span>
       </button>
 
-      <button onclick="switchTab('finance')" id="mobile-nav-finance" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center p-1.5 transition">
-        <span class="text-base leading-none">💰</span>
+      <button onclick="switchTab('finance')" id="mobile-nav-finance" class="mobile-nav-item opacity-60 flex flex-col items-center justify-center px-3 py-1.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+          <rect x="3" y="6" width="18" height="13" rx="3"/>
+          <path stroke-linecap="round" d="M3 10h18M16 14.5h2"/>
+        </svg>
         <span class="text-[9px] font-bold mt-0.5">Finanças</span>
       </button>
     </nav>
@@ -713,7 +1199,7 @@
           <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Lançamentos do Dia</span>
           <h3 id="modal-date-title" class="text-lg font-black mt-0.5">--/--/----</h3>
         </div>
-        <button onclick="closeDayModal()" class="w-8 h-8 rounded-full card-apple border flex items-center justify-center opacity-60 hover:opacity-100 transition">✕</button>
+        <button onclick="closeDayModal()" class="w-8 h-8 rounded-full card-apple border flex items-center justify-center opacity-60 hover:opacity-100 transition"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
       </div>
 
       <div class="grid grid-cols-2 gap-2 text-xs">
@@ -745,36 +1231,36 @@
     // ================= CONFIGURAÇÃO DA RIFA =================
     const RAFFLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwAkfogSU-_KHVycB2sJII0SfYcTQsjibOvhRGGXjUnW4mCYxnx_1rFNHoR0mL58iWa/exec";
     
-    // Regulamento Oficial da Formatura [1]:
-    const PRICE_BRUTO = 10.00;        // Valor pago pelo comprador [1]
-    const PRICE_MEU_BOLETO = 4.35;     // Arrecadação por cota vendida [1]
-    const PRICE_EUPHORIA = 2.65;      // Cota Euphoria [1]
+    // Regulamento Oficial da Formatura:
+    const PRICE_BRUTO = 10.00;        // Valor pago pelo comprador
+    const PRICE_MEU_BOLETO = 4.35;     // Arrecadação por cota vendida
+    const PRICE_EUPHORIA = 2.65;      // Cota Euphoria
     const BONUS_PER_50_COTAS = 25.00; // Bonificação a cada 50 cotas confirmadas
 
     // ================= CATEGORIAS FINANÇAS =================
     const EXPENSE_CATEGORIES = [
-      { id: "Mercado", label: "🛒 Mercado & Alimentação", color: "#34D399" },
-      { id: "Fixos", label: "🏠 Contas Fixas & Moradia", color: "#60A5FA" },
-      { id: "Transporte", label: "🚗 Transporte & Combustível", color: "#FBBF24" },
-      { id: "Lazer", label: "🍿 Lazer & Restaurantes", color: "#F472B6" },
-      { id: "Saude", label: "💊 Saúde & Academia", color: "#A78BFA" },
-      { id: "Estudos", label: "📚 Estudos & Cursos", color: "#38BDF8" },
-      { id: "Compras", label: "🛍️ Compras & Pessoais", color: "#FB923C" },
-      { id: "Outros", label: "📦 Outros Gastos", color: "#9CA3AF" }
+      { id: "Mercado", label: "Mercado & Alimentação", color: "#34D399" },
+      { id: "Fixos", label: "Contas Fixas & Moradia", color: "#60A5FA" },
+      { id: "Transporte", label: "Transporte & Combustível", color: "#FBBF24" },
+      { id: "Lazer", label: "Lazer & Restaurantes", color: "#F472B6" },
+      { id: "Saude", label: "Saúde & Academia", color: "#A78BFA" },
+      { id: "Estudos", label: "Estudos & Cursos", color: "#38BDF8" },
+      { id: "Compras", label: "Compras & Pessoais", color: "#FB923C" },
+      { id: "Outros", label: "Outros Gastos", color: "#9CA3AF" }
     ];
 
     const INCOME_CATEGORIES = [
-      { id: "Salario", label: "💼 Salário & Pró-labore" },
-      { id: "Extra", label: "🤝 Freelance & Renda Extra" },
-      { id: "Investimentos", label: "📈 Rendimentos & Investimentos" },
-      { id: "Outros", label: "🎁 Reembolso & Outros" }
+      { id: "Salario", label: "Salário & Pró-labore" },
+      { id: "Extra", label: "Freelance & Renda Extra" },
+      { id: "Investimentos", label: "Rendimentos & Investimentos" },
+      { id: "Outros", label: "Reembolso & Outros" }
     ];
 
     function getCategoryBadge(catId, type) {
       const allCats = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
       const match = allCats.find(c => c.id === catId);
       if (match) return match.label;
-      return catId ? `🏷️ ${catId}` : '🏷️ Geral';
+      return catId ? catId : 'Geral';
     }
 
     function updateCategoryOptions(selectedCat) {
@@ -906,9 +1392,9 @@
         const dot = document.getElementById(`dot-${i}`);
         if (!dot) continue;
         if (i < currentInputPin.length) {
-          dot.className = "w-3.5 h-3.5 rounded-full bg-white border border-white transition-all scale-110";
+          dot.className = "pin-dot filled";
         } else {
-          dot.className = "w-3.5 h-3.5 rounded-full border border-neutral-500 transition-all";
+          dot.className = "pin-dot";
         }
       }
     }
@@ -1014,7 +1500,7 @@
     let raffleBuyersData = [];
 
     function initRaffleCountdown() {
-      const targetDate = new Date("2026-12-08T11:00:00").getTime(); [1]
+      const targetDate = new Date("2026-12-08T11:00:00").getTime();
 
       function updateCountdown() {
         const now = new Date().getTime();
@@ -1059,9 +1545,9 @@
           raffleBuyersData.forEach(c => totalCotas += Number(c.cotas || 1));
 
           // 1. Cálculos de Base
-          const totalArrecadadoBruto = totalCotas * PRICE_BRUTO;       // R$ 10,00 [1]
-          const baseMeuBoleto = totalCotas * PRICE_MEU_BOLETO;         // R$ 4,35 [1]
-          const repasseEuphoria = totalCotas * PRICE_EUPHORIA;          // R$ 2,65 [1]
+          const totalArrecadadoBruto = totalCotas * PRICE_BRUTO;       // R$ 10,00
+          const baseMeuBoleto = totalCotas * PRICE_MEU_BOLETO;         // R$ 4,35
+          const repasseEuphoria = totalCotas * PRICE_EUPHORIA;          // R$ 2,65
 
           // 2. Cálculo da Bonificação Oficial (R$ 25,00 a cada 50 cotas completas)
           const lotesDe50 = Math.floor(totalCotas / 50);
@@ -1129,10 +1615,10 @@
             <div class="flex items-center gap-2">
               <span class="font-bold text-sm">${c.nome || 'Apoiador'}</span>
               <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded-full font-bold">
-                ${c.cotas} ${c.cotas > 1 ? 'cotas' : 'cota'} (R$ ${(c.cotas * PRICE_BRUTO).toFixed(2)}) [1]
+                ${c.cotas} ${c.cotas > 1 ? 'cotas' : 'cota'} (R$ ${(c.cotas * PRICE_BRUTO).toFixed(2)})
               </span>
             </div>
-            <p class="text-[11px] opacity-60 mt-0.5">📱 ${c.telefone || 'Sem telefone'} • 📅 ${c.data || 'Registrado'}</p>
+            <p class="text-[11px] opacity-60 mt-0.5">${c.telefone || 'Sem telefone'} <span class="opacity-40">·</span> ${c.data || 'Registrado'}</p>
           </div>
           
           <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -1140,7 +1626,7 @@
                    class="bg-[var(--input-bg)] border border-[var(--border-color)] rounded-xl px-2.5 py-1.5 text-xs text-white w-28 sm:w-32 focus:outline-none focus:border-neutral-500">
             <button onclick="sendRaffleWhatsApp('${encodeURIComponent(c.nome)}', '${c.telefone}', 'nums-${idx}')" 
                     class="bg-[#25D366] hover:bg-[#20ba5a] text-black font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1 shrink-0">
-              <span>📲</span> <span>WhatsApp</span>
+              <span>WhatsApp</span>
             </button>
           </div>
         `;
@@ -1172,12 +1658,12 @@
         `🎟️ *SEUS NÚMEROS DA SORTE:*\n` +
         `👉 *${numeros}*\n\n` +
         `🎥 *SORTEIO AO VIVO:*\n` +
-        `📅 08/12/2026 às 11:00 [1]\n` +
-        `📱 No Insta: @euphoria.formaturas (depois no YouTube da Euphoria Formaturas) [1]\n\n` +
+        `📅 08/12/2026 às 11:00\n` +
+        `📱 No Insta: @euphoria.formaturas (depois no YouTube da Euphoria Formaturas)\n\n` +
         `🎁 *Você está concorrendo a:*\n` +
-        `🥇 1º: Viagem para Cidade do Cabo (África do Sul) + acompanhante! [1]\n` +
-        `🥈 2º: Caixa de Som JBL PartyBox Encore 2 [1]\n` +
-        `🥉 3º: Kindle Colorsoft 16GB Tela Colorida [1]\n\n` +
+        `🥇 1º: Viagem para Cidade do Cabo (África do Sul) + acompanhante!\n` +
+        `🥈 2º: Caixa de Som JBL PartyBox Encore 2\n` +
+        `🥉 3º: Kindle Colorsoft 16GB Tela Colorida\n\n` +
         `Guarde esta mensagem como seu comprovante oficial. Boa sorte! 🍀✨`;
 
       const url = `https://api.whatsapp.com/send?phone=55${foneLimpo}&text=${encodeURIComponent(mensagem)}`;
@@ -1232,18 +1718,29 @@
 
         const stepPct = Math.min(Math.round((stepsVal / 10000) * 100), 100);
         const calPct = Math.min(Math.round((caloriesVal / 600) * 100), 100);
+        const sleepPct = Math.min(Math.round((sleepVal / 8) * 100), 100);
+
+        const RING_STEP = 194.8;
+        const RING_CAL = 263.9;
+        const RING_SLEEP = 125.7;
 
         const ringStep = document.getElementById('ring-step-progress');
-        if (ringStep) ringStep.style.strokeDashoffset = 175.9 - (175.9 * (stepPct / 100));
-        
+        if (ringStep) ringStep.style.strokeDashoffset = RING_STEP - (RING_STEP * (stepPct / 100));
+
         const ringStepTxt = document.getElementById('ring-step-text');
         if (ringStepTxt) ringStepTxt.innerText = `${stepPct}%`;
 
         const ringCal = document.getElementById('ring-cal-progress');
-        if (ringCal) ringCal.style.strokeDashoffset = 251.2 - (251.2 * (calPct / 100));
-        
+        if (ringCal) ringCal.style.strokeDashoffset = RING_CAL - (RING_CAL * (calPct / 100));
+
         const ringCalTxt = document.getElementById('ring-cal-text');
         if (ringCalTxt) ringCalTxt.innerText = `${calPct}%`;
+
+        const ringSleep = document.getElementById('ring-sleep-progress');
+        if (ringSleep) ringSleep.style.strokeDashoffset = RING_SLEEP - (RING_SLEEP * (sleepPct / 100));
+
+        const ringSleepTxt = document.getElementById('ring-sleep-text');
+        if (ringSleepTxt) ringSleepTxt.innerText = `${sleepPct}%`;
 
         const stepBar = document.getElementById('steps-bar');
         if (stepBar) stepBar.style.width = `${stepPct}%`;
@@ -1312,16 +1809,18 @@
         return `${parts[2]}/${parts[1]}`;
       });
 
-      let values = [], labelName = "", barColor = "", unit = "";
+      let values = [], labelName = "", barColor = "", fillColor = "", unit = "";
       if (selectedMetric === 'steps') {
         values = rawHealthData.map(i => Number(i.steps || 0));
         labelName = "Passos";
-        barColor = "rgba(52, 211, 153, 0.85)";
+        barColor = "#30D158";
+        fillColor = "rgba(48, 209, 88, 0.30)";
         unit = "passos/dia";
       } else if (selectedMetric === 'calories') {
         values = rawHealthData.map(i => Number(i.calories || 0));
         labelName = "Calorias Ativas";
-        barColor = "rgba(251, 146, 60, 0.85)";
+        barColor = "#FF9F0A";
+        fillColor = "rgba(255, 159, 10, 0.26)";
         unit = "kcal/dia";
       } else if (selectedMetric === 'sleep') {
         values = rawHealthData.map(i => {
@@ -1331,7 +1830,8 @@
           return Number(s.toFixed(1));
         });
         labelName = "Tempo de Sono";
-        barColor = "rgba(129, 140, 248, 0.85)";
+        barColor = "#5E5CE6";
+        fillColor = "rgba(94, 92, 230, 0.26)";
         unit = "horas/noite";
       }
 
@@ -1347,31 +1847,65 @@
       if (chartUnit) chartUnit.innerText = unit;
 
       const isLight = document.body.classList.contains('light-theme');
-      const gridColor = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.05)';
-      const tickColor = isLight ? '#6B7280' : '#71717A';
+      const gridColor = isLight ? 'rgba(0, 0, 0, 0.06)' : 'rgba(255, 255, 255, 0.06)';
+      const tickColor = isLight ? '#6B7280' : '#8E8E93';
 
       const chartCanvas = document.getElementById('healthChart');
       if (!chartCanvas) return;
       const ctx = chartCanvas.getContext('2d');
       if (currentChart) currentChart.destroy();
 
+      const fillGradient = ctx.createLinearGradient(0, 0, 0, chartCanvas.clientHeight || 280);
+      fillGradient.addColorStop(0, fillColor);
+      fillGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
       currentChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
           labels: labels,
           datasets: [{
             data: values,
-            backgroundColor: barColor,
-            borderRadius: 6
+            borderColor: barColor,
+            backgroundColor: fillGradient,
+            fill: true,
+            tension: 0.38,
+            borderWidth: 2.5,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: barColor,
+            pointHoverBorderColor: isLight ? '#FFFFFF' : '#000000',
+            pointHoverBorderWidth: 2
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
+          interaction: { intersect: false, mode: 'index' },
+          animation: { duration: 760, easing: 'easeOutQuart' },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: isLight ? 'rgba(255,255,255,0.96)' : 'rgba(28,28,30,0.96)',
+              titleColor: isLight ? '#1C1C1E' : '#F5F5F7',
+              bodyColor: isLight ? '#3A3A3C' : '#C7C7CC',
+              borderColor: isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.10)',
+              borderWidth: 1,
+              padding: 10,
+              cornerRadius: 12,
+              displayColors: false
+            }
+          },
           scales: {
-            x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11 } } },
-            y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 } } }
+            x: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: { color: tickColor, font: { size: 11 }, maxRotation: 0 }
+            },
+            y: {
+              grid: { color: gridColor, drawTicks: false },
+              border: { display: false },
+              ticks: { color: tickColor, font: { size: 11 }, padding: 8 }
+            }
           }
         }
       });
@@ -1495,7 +2029,7 @@
           budgetStatusEl.className = "text-amber-500 font-semibold";
         } else {
           budgetBarEl.className = "h-2.5 rounded-full transition-all duration-700 bg-rose-500";
-          budgetStatusEl.innerText = budgetPct > 100 ? `⚠️ Estourou o teto em R$ ${(monthExpenses - monthlyBudget).toFixed(2)}` : "Alerta: limite quase atingido";
+          budgetStatusEl.innerText = budgetPct > 100 ? `Estourou o teto em R$ ${(monthExpenses - monthlyBudget).toFixed(2)}` : "Alerta: limite quase atingido";
           budgetStatusEl.className = "text-rose-500 font-semibold";
         }
       }
@@ -1576,14 +2110,17 @@
             data: dataValues.length > 0 ? dataValues : [1],
             backgroundColor: dataValues.length > 0 ? bgColors : ['rgba(255,255,255,0.05)'],
             borderWidth: 0,
-            hoverOffset: 4
+            borderRadius: 6,
+            spacing: 3,
+            hoverOffset: 6
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: { animateRotate: true, duration: 820, easing: 'easeOutQuart' },
           plugins: { legend: { display: false } },
-          cutout: '72%'
+          cutout: '76%'
         }
       });
     }
@@ -1637,14 +2174,16 @@
                 ${catBadge}
               </span>
             </div>
-            <p class="text-[11px] opacity-60 mt-0.5">📅 ${dateDisplay}</p>
+            <p class="text-[11px] opacity-60 mt-0.5">${dateDisplay}</p>
           </div>
           <div class="flex items-center gap-2 sm:gap-3">
             <span class="font-black text-sm ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
               ${isExp ? '-' : '+'} R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
             </span>
             <button onclick="startEditing('${item.id}')" title="Editar" class="p-1.5 opacity-60 hover:opacity-100 hover:bg-neutral-800/40 rounded-lg transition">
-              ✏️
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 20h4L18.5 9.5a2.8 2.8 0 0 0-4-4L4 16v4Z"/>
+              </svg>
             </button>
             <button onclick="deleteTransaction('${item.id}')" title="Excluir" class="p-1.5 opacity-40 hover:opacity-100 hover:text-rose-500 transition">
               ✕
@@ -1828,7 +2367,11 @@
                 <span class="font-black text-sm ${isExp ? 'text-rose-500' : 'text-emerald-500'}">
                   ${isExp ? '-' : '+'} R$ ${val.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
                 </span>
-                <button onclick="editFromModal('${item.id}')" title="Editar" class="p-1 opacity-60 hover:opacity-100">✏️</button>
+                <button onclick="editFromModal('${item.id}')" title="Editar" class="p-1 opacity-60 hover:opacity-100">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 20h4L18.5 9.5a2.8 2.8 0 0 0-4-4L4 16v4Z"/>
+                  </svg>
+                </button>
                 <button onclick="deleteFromModal('${item.id}')" title="Excluir" class="p-1 opacity-40 hover:opacity-100 hover:text-rose-500">✕</button>
               </div>
             `;
